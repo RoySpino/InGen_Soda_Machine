@@ -119,7 +119,7 @@ Public Class SodaDriver
                       "|----------------------------------------------|" & vbNewline & _
                       "| add             Add this years profets       |" & vbNewline & _
                       "| adds            Add this years spendings     |" & vbNewline & _
-                      "| avgg            Get avg. grose for the year  |" & vbNewline & _
+                      "| avgg            Get avg. gross for the year  |" & vbNewline & _
                       "| avgn            Get avg. net for this year   |" & vbNewline & _
                       "| avgs            Get avg. spendings           |" & vbNewline & _
                       "| net             Calculate profets per-can    |" & vbNewline & _
@@ -233,7 +233,7 @@ Public Class SodaDriver
         ern = getAvrage(earning)
 
         Console.WriteLine(vbTab & " _________________________________" & vbNewLine & _
-                  vbTab & "/ Average Grose: " & ern.ToString("C"))
+                  vbTab & "/ Average Gross: " & ern.ToString("C"))
     End Sub
     '=======================================================================================================================
     Sub statAvgn()
@@ -315,7 +315,7 @@ Public Class SodaDriver
         ern = getSum(earning)
 
         Console.WriteLine(vbTab & " _________________________________" & vbNewLine & _
-                  vbTab & "/ Total Grose: " & (ern.ToString("C")))
+                  vbTab & "/ Total Gross: " & (ern.ToString("C")))
     End Sub
     '=======================================================================================================================
     Sub statAddSpend()
@@ -328,7 +328,7 @@ Public Class SodaDriver
         spn = getSum(spending)
 
         Console.WriteLine(vbTab & " _________________________________" & vbNewLine & _
-                  vbTab & "/ Total Grose: " & (spn.ToString("C")))
+                  vbTab & "/ Total Spendings: " & (spn.ToString("C")))
     End Sub
     '=======================================================================================================================
     Sub statWeek()
