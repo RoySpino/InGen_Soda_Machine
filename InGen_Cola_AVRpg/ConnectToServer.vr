@@ -1,0 +1,514 @@
+﻿Using System
+Using System.Text
+Using System.Data
+Using System.Collections.Generic
+Using MySql.Data.MySqlClient
+
+
+DclNamespace SodaAVR
+
+BegClass ConnectToServer Access(*Public)
+	DclFld		 cnet		 type(String)
+	DclFld       con         Type(MySqlConnection)
+
+	BegConstructor Access(*Public)
+		cnet = "Server=localhost; Database=soda; Uid=root; PASSWORD=vig/&*649/TD10036em1271;"
+		con = *new MysqlConnection()
+
+		con.ConnectionString = cnet
+	endConstructor
+
+	// //////////////////////////////////////////////////////////////////////////////////////////////////////
+	BegFunc open Access(*Public) Type(Boolean)
+		try
+			con.Open()
+			leavesr *true
+		catch Error System.Exception
+			Console.WriteLine(Error.ToString())
+		endtry
+		 leavesr *False
+	EndFunc
+
+	// //////////////////////////////////////////////////////////////////////////////////////////////////////
+	BegFunc close Access(*Public) Type(Boolean)
+		try
+			con.Close()
+			leavesr *true
+		catch Error System.Exception
+			Console.WriteLine(Error.ToString())
+		endtry
+		 leavesr *true
+	EndFunc
+
+	// //////////////////////////////////////////////////////////////////////////////////////////////////////
+	BegFunc runQuery Access(*public) Type(Boolean)	
+		DclSrParm query Type(String)
+
+		DclFld cmd Type(MySqlCommand)
+
+		If open() = *true 
+			Try
+				cmd = *new MySqlCommand(query,con)
+				cmd.ExecuteReader()
+
+				*this.close()
+				LeaveSr *true
+			Catch Ex System.Exception
+				Console.WriteLine(Ex.ToString())
+			EndTry
+		EndIf
+		LeaveSr *false
+	EndFunc
+
+	// //////////////////////////////////////////////////////////////////////////////////////////////////////
+	BegFunc getEl Access(*public) Type(String)	
+		DclSrParm Table Type(String)
+		DclSrParm column Type(String)
+		DclSrParm Constraint Type(String)
+
+		DclFld cmd Type(MySqlCommand)
+		DclFld query Type(String)
+		DclFld red Type(MySqlDataReader)
+		DclFld ret Type(String) inz("")
+
+		query = "SELECT " + Column + " FROM " + Table + " WHERE " + Constraint
+
+		If open() = *true 
+			Try
+				
+				cmd = *new MySqlCommand(query,con)
+				red = cmd.ExecuteReader()
+				
+				DoWhile (red.Read())
+					ret = red[0].ToString()
+				EndDo
+
+				*this.close()
+				LeaveSr ret
+			Catch Ex System.Exception
+				Console.WriteLine(Ex.ToString())
+			EndTry
+		EndIf
+		LeaveSr ""
+	EndFunc
+
+	// ///////////////////////////////////////////////////////////////////////////////////////////////////////
+	BegFunc showAsTable Access(*Public) Type(DataTable)
+		DclSrParm query Type(String)
+
+		DclFld ret Type(DataTable)
+		DclFld cmd Type(MySqlDataAdapter)
+
+		if open() = *true
+			Try
+				cmd = *new MySqlDataAdapter(query, con)
+				ret *Eq *new DataTable()
+				cmd.Fill(ret)
+
+				*this.close()
+				LeaveSr ret
+			Catch
+			EndTry
+		endif
+		LeaveSr *nothing
+	EndFunc
+
+	// ///////////////////////////////////////////////////////////////////////////////////////////////////////
+	BegFunc showAsList Access(*Public) Type(List(*Of String))
+		DclSrParm query Type(String)
+
+		DclFld ret Type(List(*Of String))
+		DclFld cmd Type(MySqlCommand)
+		DclFld red Type(MySqlDataReader)
+
+		If open() = *true 
+			Try
+				ret = *new List(*Of String)()
+				
+				cmd = *new MySqlCommand(query,con)
+				red = cmd.ExecuteReader()
+				
+				DoWhile (red.Read())
+					ret.Add(red[0].ToString())
+				EndDo
+
+				*this.close()
+				LeaveSr ret
+			Catch Ex System.Exception
+				Console.WriteLine(Ex.ToString())
+			EndTry
+		EndIf
+		LeaveSr *nothing
+	EndFunc
+
+	// //////////////////////////////////////////////////////////////////////////////////////////////////////
+	BegFunc insert Access(*public) Type(Boolean)	
+		DclSrParm Table Type(String)
+		DclSrParm col Type(List(*Of String))
+		DclSrParm strin Type(List(*Of String))
+		DclSrParm douin Type(List(*Of Double))
+		DclSrParm intin Type(List(*Of System.Int32))
+		DclSrParm bolin Type(List(*Of Boolean))
+		DclSrParm datin Type(List(*Of DateTime))
+
+		DclFld cmd Type(MySqlCommand)
+		DclFld query Type(String)
+		DclFld vallst Type(String) inz("")
+		DclFld colns Type(String) inz("")
+		DclFld i Type(Int32) inz(0)
+
+		// construct list of columns to update
+		DoWhile (i < col.Count())
+			colns += col(i)
+			If i < (col.Count()-1)
+				colns += ","
+			EndIF
+			i = i + 1
+		EndDo
+
+		// setup string values
+		If strin <> *nothing
+			i *Eq 0
+			DoWhile (i < strin.Count)
+				vallst = vallst + "?s_"+i
+
+				If i < (strin.Count()-1)
+					vallst += ","
+				EndIF
+				i = i + 1
+			EndDo
+		EndIf
+
+		// setup double values
+		If douin <> *nothing
+			i *Eq 0
+			If vallst.Length > 1
+				vallst = vallst + "," 
+			EndIf
+
+			DoWhile (i < douin.Count())
+				vallst = vallst + "?d_"+i
+
+				If i < (douin.Count()-1)
+					vallst += ","
+				EndIF
+				i = i + 1
+			EndDo
+		EndIf
+
+		// setup integer values
+		If intin <> *nothing
+			i *Eq 0
+			If vallst.Length > 1
+				vallst *Eq vallst + "," 
+			EndIf
+
+			DoWhile (i < intin.Count())
+				vallst *Eq vallst + "?i_"+i
+
+				If i < (intin.Count()-1)
+					vallst *Eq vallst + ","
+				EndIF
+				i *Eq i + 1
+			EndDo
+		EndIf
+
+		// setup boolean values
+		If bolin <> *nothing
+			i *Eq 0
+			If vallst.Length > 1
+				vallst *Eq vallst + "," 
+			EndIf
+
+			DoWhile (i < bolin.Count())
+				vallst *Eq vallst + "?b_"+i
+
+				If i < (bolin.Count()-1)
+					vallst *Eq vallst + ","
+				EndIF
+				i *Eq i + 1
+			EndDo
+		EndIf
+
+		// setup Date Time values
+		If datin <> *nothing
+			i *Eq 0
+			If vallst.Length > 1
+				vallst *Eq vallst + "," 
+			EndIf
+
+			DoWhile (i < datin.Count())
+				vallst *Eq vallst + "?dt_"+i
+
+				If i < (datin.Count()-1)
+					vallst *Eq vallst + ","
+				EndIF
+				i *Eq i + 1
+			EndDo
+		EndIf
+
+
+		query = "INSERT INTO " + Table + " (" + Colns + ") VALUES (" + vallst + ")"
+		Try
+			If *this.open() = *true
+				cmd *Eq *new MySqlCommand(query,con)
+				cmd.Prepare()
+
+				// setup String paramiters
+				if strin <> *nothing
+					i *Eq 0
+					DoWhile (i < strin.Count)
+						cmd.Parameters.AddWithValue("?s_"+i, strin(i))
+						i *Eq i+1
+					EndDO
+				EndIf
+
+				// setup double paramiters
+				if douin <> *nothing
+					i *Eq 0
+					DoWhile (i < douin.Count)
+						cmd.Parameters.AddWithValue("?d_"+i, douin(i))
+						i *Eq i+1
+					EndDO
+				EndIf
+
+				// setup String paramiters
+				if intin <> *nothing
+					i *Eq 0
+					DoWhile (i < intin.Count)
+						cmd.Parameters.AddWithValue("?i_"+i, intin(i))
+						i *Eq i+1
+					EndDO
+				EndIf
+
+				// setup double paramiters
+				if bolin <> *nothing
+					i *Eq 0
+					DoWhile (i < bolin.Count)
+						cmd.Parameters.AddWithValue("?b_"+i, bolin(i))
+						i *Eq i+1
+					EndDO
+				EndIf
+
+				// setup date Time paramiters
+				if datin <> *nothing
+					i *Eq 0
+					DoWhile (i < datin.Count)
+						cmd.Parameters.AddWithValue("?dt_"+i, datin(i))
+						i *Eq i+1
+					EndDO
+				EndIf
+
+				cmd.ExecuteNonQuery()
+				*this.close()
+				LeaveSr *True
+			EndIf
+		Catch Ex System.Exception
+			Console.WriteLine(Ex.ToString())
+			LeaveSr *false
+		EndTry
+
+		LeaveSr *false
+	EndFunc
+
+	// //////////////////////////////////////////////////////////////////////////////////////////////////////
+	BegFunc update Access(*public) Type(Boolean)	
+		DclSrParm Table Type(String)
+		DclSrParm col Type(List(*Of String))
+		DclSrParm strin Type(List(*Of String))
+		DclSrParm douin Type(List(*Of Double))
+		DclSrParm intin Type(List(*Of System.Int32))
+		DclSrParm bolin Type(List(*Of Boolean))
+		DclSrParm datin Type(List(*Of DateTime))
+		DclSrParm constraint Type(String)
+
+		DclFld cmd Type(MySqlCommand)
+		DclFld query Type(String)
+		DclFld vallst Type(String) inz("")
+		DclFld colns Type(String) inz("")
+		DclFld i Type(Int32) inz(0)
+		DclFld indCnt Type(Int32) inz(0)
+
+		// setup string values
+		If strin <> *nothing
+			i *Eq 0
+			DoWhile (i < strin.Count)
+				vallst = vallst + col(indCnt) + "=?s_"+i
+
+				If i < (strin.Count()-1)
+					vallst += ","
+				EndIF
+				i = i + 1
+				indCnt = indCnt + 1
+			EndDo
+		EndIf
+
+		// setup double values
+		If douin <> *nothing
+			i *Eq 0
+			If vallst.Length > 1
+				vallst = vallst + "," 
+			EndIf
+
+			DoWhile (i < douin.Count())
+				vallst = vallst+ col(indCnt) + "=?d_"+i
+
+				If i < (douin.Count()-1)
+					vallst += ","
+				EndIF
+				i = i + 1
+				indCnt = indCnt + 1
+			EndDo
+		EndIf
+
+		// setup integer values
+		If intin <> *nothing
+			i *Eq 0
+			If vallst.Length > 1
+				vallst *Eq vallst + "," 
+			EndIf
+
+			DoWhile (i < intin.Count())
+				vallst *Eq vallst +col(indCnt)+ "=?i_"+i
+
+				If i < (intin.Count()-1)
+					vallst *Eq vallst + ","
+				EndIF
+				i *Eq i + 1
+				indCnt *Eq indCnt + 1
+			EndDo
+		EndIf
+
+		// setup boolean values
+		If bolin <> *nothing
+			i *Eq 0
+			If vallst.Length > 1
+				vallst *Eq vallst + "," 
+			EndIf
+
+			DoWhile (i < bolin.Count())
+				vallst *Eq vallst + col(indCnt) + "=?b_"+i
+
+				If i < (bolin.Count()-1)
+					vallst *Eq vallst + ","
+				EndIF
+				i *Eq i + 1
+				indCnt *Eq indCnt + 1
+			EndDo
+		EndIf
+
+		// setup Date Time values
+		If datin <> *nothing
+			i *Eq 0
+			If vallst.Length > 1
+				vallst *Eq vallst + "," 
+			EndIf
+
+			DoWhile (i < datin.Count())
+				vallst *Eq vallst + col(indCnt) + "=?dt_"+i
+
+				If i < (datin.Count()-1)
+					vallst *Eq vallst + ","
+				EndIF
+				i *Eq i + 1
+				indCnt *Eq indCnt + 1
+			EndDo
+		EndIf
+
+
+		query = "UPDATE " + Table + " SET " + vallst + " WHERE " + constraint
+
+		Try
+			If *this.open() = *true
+				cmd *Eq *new MySqlCommand(query,con)
+				cmd.Prepare()
+
+				// setup String paramiters
+				if strin <> *nothing
+					i *Eq 0
+					DoWhile (i < strin.Count)
+						cmd.Parameters.AddWithValue("?s_"+i, strin(i))
+						i *Eq i+1
+					EndDO
+				EndIf
+
+				// setup double paramiters
+				if douin <> *nothing
+					i *Eq 0
+					DoWhile (i < strin.Count)
+						cmd.Parameters.AddWithValue("?d_"+i, strin(i))
+						i *Eq i+1
+					EndDO
+				EndIf
+
+				// setup String paramiters
+				if intin <> *nothing
+					i *Eq 0
+					DoWhile (i < intin.Count)
+						cmd.Parameters.AddWithValue("?i_"+i, intin(i))
+						i *Eq i+1
+					EndDO
+				EndIf
+
+				// setup double paramiters
+				if bolin <> *nothing
+					i *Eq 0
+					DoWhile (i < strin.Count)
+						cmd.Parameters.AddWithValue("?b_"+i, strin(i))
+						i *Eq i+1
+					EndDO
+				EndIf
+
+				// setup date Time paramiters
+				if datin <> *nothing
+					i *Eq 0
+					DoWhile (i < datin.Count)
+						cmd.Parameters.AddWithValue("?dt_"+i, datin(i))
+						i *Eq i+1
+					EndDO
+				EndIf
+
+				cmd.ExecuteNonQuery()
+				*this.close()
+				LeaveSr *True
+			EndIf
+		Catch Ex System.Exception
+			Console.WriteLine(Ex.ToString())
+			LeaveSr *false
+		EndTry
+
+		LeaveSr *false
+	EndFunc
+
+	// //////////////////////////////////////////////////////////////////////////////////////////////////////
+	BegFunc count Access(*public) Type(Int32)
+		DclSrParm Table Type(String)
+		DclSrParm column Type(String)
+		DclSrParm Constraint Type(String)
+
+		DclFld cmd Type(MySqlCommand)
+		DclFld query Type(String)
+		DclFld red Type(MySqlDataReader)
+		DclFld ret Type(*packed) len(10,0) inz(0)
+
+		query = "SELECT COUNT(" + Column + ") FROM " + Table + " WHERE " + Constraint
+
+		If open() = *true 
+			Try
+				
+				cmd = *new MySqlCommand(query,con)
+				red = cmd.ExecuteReader()
+				
+				DoWhile (red.Read())
+					ret = %int(red[0].ToString())
+				EndDo
+
+				*this.close()
+				LeaveSr ret
+			Catch Ex System.Exception
+				Console.WriteLine(Ex.ToString())
+			EndTry
+		EndIf
+		LeaveSr 0
+	EndFunc
+EndClass

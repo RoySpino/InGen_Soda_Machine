@@ -1,0 +1,22 @@
+﻿Using System
+Using System.Collections
+Using System.Collections.Generic
+Using System.Text
+
+BegClass Program
+
+	BegSr Main Shared(*Yes) Access(*Public) Attributes(System.STAThread())
+		DclSrParm args Type(*String) Rank(1)
+
+		DclFld men type(Menus)
+		DclFld sel type(string)
+		DclFld DoMainLoop type(*packed) Len(5,0) inz(1)
+		DclFld DoSubLoop type(*packed) Len(5,0) inz(1)
+
+		men *Eq *New Menus()
+
+		doWhile DoMainLoop = 1
+			doMainLoop *Eq men.MainMenu()
+		endDO
+	EndSr
+EndClass

@@ -1,0 +1,784 @@
+﻿Using System
+Using System.Text
+Using System.Collections.Generic
+Using System.Data
+
+DclNamespace SodaAVR
+
+BegClass Menus Access(*Public)
+		DclFld db type(ConnectToServer)
+
+		BegConstructor access(*public)
+			db = *new ConnectToServer()
+		EndConstructor
+
+		BegFunc MainMenu Access(*Public) Type(*Packed) Len(2,0)
+			DclFld sel Type(String)
+
+			Console.Clear()
+			Console.WriteLine(" ______________________________________________")
+			Console.WriteLine( "| InGen Cola                                   |")
+			Console.WriteLine( "|----------------------------------------------|")
+			Console.WriteLine( "| Current         Show Previous entries        |")
+			Console.WriteLine( "| New             Make new Entry               |")
+			Console.WriteLine( "| Stats           Soda Statistics              |")
+			Console.WriteLine( "| Maint           Database Maintanince         |")
+			Console.WriteLine( "| EXIT            Quit Program                 |")
+			Console.WriteLine( "|______________________________________________|")
+			Console.Write( ">>> ")
+			sel *Eq Console.ReadLine()
+
+			sel = sel.ToLower()
+
+			Select
+				when sel = "current"
+					currentMenu()
+				when sel = "new"
+					NewMenu()
+				when sel = "stats"
+					statsMenu()
+				when sel = "maint"
+					MaintenanceMenu()
+				when sel = "exit"
+					LeaveSr 0
+			EndSl
+			LeaveSr 1
+		EndFunc
+
+		// ///////////////////////////////////////////////////////////////////////////////////////////////
+		BegFunc NewMenu Access(*Public) Type(*Packed) Len(2,0)
+			DclFld sel Type(String)
+			DclFld doLoop Type(*Packed) len(2,0) inz(1)
+
+			Console.Clear()
+			dowhile doLoop =1
+				Console.WriteLine( " ______________________________________________")
+				Console.WriteLine( "| InGen Cola                 New Records       |")
+				Console.WriteLine( "|----------------------------------------------|")
+				Console.WriteLine( "| Profets         Enter dayley profets         |")
+				Console.WriteLine( "| Purchase        Enter cost of soda spent     |")
+				Console.WriteLine( "| CD              Back to Main Menu            |")
+				Console.WriteLine( "|______________________________________________|")
+				Console.Write( ">>> ")
+				sel *Eq Console.ReadLine()
+
+				sel = sel.ToLower()
+
+				Select
+					when sel = "profets"
+						NewProfets()
+					when sel = "purchase"
+						NewPurchase()
+					when sel = "cd"
+						LeaveSr 0
+					other
+						Console.Clear()
+				EndSl
+			EndDO
+			LeaveSr 0
+		EndFunc
+		// ///////////////////////////////////////////////////////////////////////////////////////////////
+		BegFunc StatsMenu Access(*Public) Type(*Packed) Len(2,0)
+			DclFld sel Type(String)
+			DclFld doLoop Type(*Packed) len(2,0) inz(1)
+
+			Console.Clear()
+			dowhile doLoop =1
+				Console.WriteLine( " ______________________________________________")
+	 		    Console.WriteLine( "| InGen Cola                 Statistics        |")
+			    Console.WriteLine( "|----------------------------------------------|")
+			    Console.WriteLine( "| add             Add this years profets       |")
+			    Console.WriteLine( "| avgg            Get avg. grose for the year  |")
+			    Console.WriteLine( "| avgn            Get avg. net for this year   |")
+			    Console.WriteLine( "| avgs            Get avg. spendings           |")
+			    Console.WriteLine( "| net             Calculate profets per-can    |")
+			    Console.WriteLine( "| sum             Calculate Net Profets        |")
+			    Console.WriteLine( "| weekest         Estemate weekly profets      |")
+			    Console.WriteLine( "| CD              Back to Main Menu            |")
+			    Console.WriteLine( "|______________________________________________|")
+				Console.Write( ">>> ")
+				sel *Eq Console.ReadLine()
+
+				sel = sel.ToLower()
+
+				Select
+					when sel = "add"
+						StatAdd()
+					when sel = "avgg"
+						StatAvgg()
+					when sel = "avgn"
+						StatAvgn()
+					when sel = "avgs"
+						StatAvgs()
+					when sel = "net"
+						statNet()
+					when sel = "sum"
+						StatSum()
+					when sel = "weekest"
+						StatWeekEst()
+					when sel = "cd"
+						LeaveSr 0
+				EndSl
+			EndDO
+			LeaveSr 0
+		EndFunc
+		// ///////////////////////////////////////////////////////////////////////////////////////////////
+		BegFunc currentMenu Access(*public) Type(*packed) Len(2,0)
+			DclFld Sel Type(String)
+			DclFld doLoop Type(*Packed) len(2,0) inz(1)
+
+			Console.Clear()
+			DoWhile doLoop =1
+				Console.WriteLine(" ______________________________________________")
+				Console.WriteLine("| InGen Cola                 Current Records   |")
+				Console.WriteLine("|----------------------------------------------|")
+				Console.WriteLine("| CashOut         Show all profets collected   |")
+				Console.WriteLine("| Spendings       Show spending records        |")
+				Console.WriteLine("| inventory       Show weekly inventory        |")
+				Console.WriteLine("| CD              Back to Main Menu            |")
+				Console.WriteLine("|______________________________________________|")
+				Console.Write( ">>> ")
+				sel *Eq Console.ReadLine()
+
+				sel = sel.ToLower()
+
+				Select
+					when sel = "cashout"
+						currentCashOut()
+					when sel = "spendings"
+						currentSpend()
+					when sel = "inventory"
+						currentInven()
+					when sel = "cd"
+						LeaveSr 0
+				EndSl
+			EndDo
+			LeaveSr 1
+		EndFunc
+		// ///////////////////////////////////////////////////////////////////////////////////////////////
+		BegFunc MaintenanceMenu Access(*public) Type(*packed) Len(2,0)
+			DclFld Sel Type(String)
+			DclFld doLoop Type(*Packed) len(2,0) inz(1)
+
+			Console.Clear()
+			DoWhile doLoop =1
+				Console.WriteLine(" ______________________________________________")
+				Console.WriteLine("| InGen Cola                 Current Records   |")
+				Console.WriteLine("|----------------------------------------------|")
+				Console.WriteLine("| UdatInv         update inventory records     |")
+				Console.WriteLine("| UdatCsh         update cash colected records |")
+				Console.WriteLine("| UdatSpn         update spending records      |")
+				Console.WriteLine("| AddSoda         add new soda flavor          |")
+				Console.WriteLine("| CD              Back to Main Menu            |")
+				Console.WriteLine("|______________________________________________|")
+				Console.Write( ">>> ")
+				sel *Eq Console.ReadLine()
+
+				sel = sel.ToLower()
+
+				Select
+					when sel = "udatinv"
+						maintUpInv()
+					when sel = "udatcsh"
+					when sel = "udatspn"
+					when sel = "addsoda"
+					when sel = "cd"
+						LeaveSr 0
+				EndSl
+			EndDo
+			LeaveSr 1
+		EndFunc
+
+		// ///////////////////////////////////////////////////////////////////////////////////////////////
+		BegFunc IsNumeric access(*protected) Type(Boolean)
+			DclSrParm raw Type(String)
+			Try
+				Convert.ToDouble(raw)
+				leaveSr *true
+			Catch ex System.Exception
+				leaveSr *false
+			EndTry
+		EndFunc 
+
+		// ///////////////////////////////////////////////////////////////////////////////////////////////
+		BegSr DisplaySoda access(*protected)
+			DclFld r Type(Int32) inz(0)
+			DclFld c Type(Int32) inz(0)
+			DclFld tmp Type(DataTable)
+
+			tmp = db.showAsTable("SELECT SodaID, SodaName FROM sodas")
+			
+			Console.WriteLine(" _______________________")
+			Console.WriteLine(String.Format("|{0,7} {1,15}|","ID","Soda"))
+			Console.WriteLine("|-----------------------|")
+
+			DoWhile r < tmp.Rows.Count
+				Console.WriteLine(String.Format("|{0,7} {1,15}|", tmp.Rows(r)(0).ToString(), tmp.Rows(r)(1).ToString()))
+				r *Eq r + 1
+			EndDo
+			
+			Console.WriteLine("|_______________________|")
+		EndSr
+
+		// ///////////////////////////////////////////////////////////////////////////////////////////////
+		BegSr NewProfets access(*protected)
+			DclFld douin Type(List(*Of Double))
+			DclFld datin Type(List(*Of DateTime))
+			DclFld col Type(List(*Of string))
+			DclFld sel Type(String)
+
+			col *Eq *new List(*Of String)()
+			datin *Eq *new List(*Of DateTime)()
+			douin *Eq *new List(*Of Double)()
+
+			Console.Clear()
+			Console.WriteLine(" ______________________________________________")
+            Console.WriteLine ("| InGen Cola                 New Records       |")
+            Console.WriteLine ("|----------------------------------------------|")
+            Console.Write ("| Enter the total amount collected: ")
+		    sel *Eq Console.ReadLine()
+
+			if sel = "q" or sel = "back"
+				leavesr
+			endif
+
+			If IsNumeric(sel) = *true and isNumeric(sel) = *true
+				col.Add("ernings")
+				col.Add("date")
+
+				datin.Add(DateTime.Now)
+				douin.Add(Convert.ToDouble(sel))
+
+				db.insert("cashout",col,*nothing,douin,*nothing,*nothing,datin)
+			else
+				Console.WriteLine("")
+			EndIf
+
+			
+		EndSr
+
+		// ///////////////////////////////////////////////////////////////////////////////////////////////
+		BegSr NewPurchase Access(*protected)
+			DclFld douin Type(List(*Of Double))
+			DclFld datin Type(List(*Of DateTime))
+			DclFld col Type(List(*Of string))
+			DclFld intin Type(List(*Of Int32))
+			DclFld sel Type(String)
+			DclFld money type(*packed) len(10,2) inz(0)
+			DclFld lim Type(*packed) Len(10,0) inz(0)
+			DclFld i Type(*packed) Len(10,0) inz(0)
+
+			col *Eq *new List(*Of String)()
+			datin *Eq *new List(*Of DateTime)()
+			douin *Eq *new List(*Of Double)()
+			intin *eq *new List(*Of Int32)()
+
+
+			Console.Clear()
+			Console.WriteLine(" ______________________________________________")
+            Console.WriteLine ("| InGen Cola                 New Records       |")
+            Console.WriteLine ("|----------------------------------------------|")
+            Console.Write ("| Enter the number of cans purchased: ")
+		    sel *Eq Console.ReadLine()
+			
+			if sel = "q" or sel = "back"
+				leavesr
+			endif
+
+			if IsNumeric(sel) = *true
+				lim *Eq Convert.ToDouble(sel)
+			EndIf
+
+			DisplaySoda()
+			
+			
+			col.Add("price")
+			col.Add("crv")
+			col.Add("worth")
+			col.Add("net")
+			col.Add("sodaID")
+			col.Add("cancount")
+			col.Add("date")
+
+
+			DoWhile i < lim
+				do
+					Console.Write("| Enter Soda ID: ")
+					sel = Console.ReadLine()
+
+					if IsNumeric(sel)
+						intin.Add(Convert.ToInt32(sel))
+						leave
+					else
+						Console.WriteLine("| <<Error: input was not valid>>")
+					endif
+				end
+
+				do
+					Console.Write("| Enter price of unit: ")
+					sel = Console.ReadLine()
+
+					if IsNumeric(sel)
+						money = Convert.ToDouble(sel)
+						douin.Add(money)
+						leave
+					else
+						Console.WriteLine("| <<Error: input was not valid>>")
+					endif
+				endDo
+
+				if money > 4.5
+					intin.Add(24)
+				else
+					intin.Add(12)
+				endif
+
+				douin.Add(.05)
+				douin.Add(.5 * intin[1])
+				douin.Add((.5 * intin[1])-(money + (.05 * intin[1])) )
+
+				datin.Add(DateTime.Now)
+
+				db.insert("Inventory", col, *nothing, douin, intin, *nothing, datin)
+				douin.Clear()
+				intin.Clear()
+				datin.Clear()
+				i *Eq i +1
+			EndDo
+			
+		EndSr
+
+		// ///////////////////////////////////////////////////////////////////////////////////////////////
+		BegSr StatAdd Access(*protected)
+			dclFld tmp Type( List(*Of string))
+			dclFld earnings type(*packed) len(10,2) inz(0)
+			dclFld i type(int32) inz(0)
+
+			Console.Clear()
+			tmp = db.showAsList("SELECT ernings FROM cashout;")
+
+			earnings = getSum(tmp)
+
+			Console.WriteLine("  _______________________________________")
+			Console.WriteLine(" / Total Gross Earnings: " + earnings)
+		EndSr
+
+		// ///////////////////////////////////////////////////////////////////////////////////////////////
+		BegSr StatAvgg Access(*protected)
+			dclFld tmp Type( List(*Of string))
+			dclFld earnings type(*packed) len(10,2) inz(0)
+			dclFld i type(int32) inz(0)
+
+			Console.Clear()
+			tmp = db.showAsList("SELECT ernings FROM cashout;")
+
+			earnings = getAvrage(tmp)
+			
+			Console.WriteLine("  _______________________________________")
+			Console.WriteLine(" / Avrage Gross Earnings: " + earnings)
+		EndSr
+
+		// ///////////////////////////////////////////////////////////////////////////////////////////////
+		BegSr StatAvgn Access(*protected)
+			dclFld tmp Type( List(*Of string))
+			dclFld tmp2 Type( List(*Of string))
+			dclFld earnings type(*packed) len(10,2) inz(0)
+			dclFld spending type(*packed) len(10,2) inz(0)
+			dclFld i type(int32) inz(0)
+			dclFld units type(int32) inz(0)
+
+			Console.Clear()
+			tmp = db.showAsList("SELECT ernings FROM cashout;")
+			tmp2 = db.showAsList("SELECT price FROM spendings;")
+
+			earnings *Eq getSum(tmp)
+			spending *Eq getSum(tmp2)
+
+			units *Eq (tmp2.Count + tmp.Count) / 2
+			earnings = (earnings - spending) / units
+			
+			Console.WriteLine("  _______________________________________")
+			Console.WriteLine(" / Avrage Net Earnings: " + earnings)
+		EndSr
+
+		// ///////////////////////////////////////////////////////////////////////////////////////////////
+		BegSr StatAvgs Access(*protected)
+			dclFld tmp Type( List(*Of string))
+			dclFld earnings type(*packed) len(10,2) inz(0)
+
+			Console.Clear()
+			tmp = db.showAsList("SELECT price FROM spendings;")
+
+			earnings *Eq getAvrage(tmp)
+			
+			Console.WriteLine("  _______________________________________")
+			Console.WriteLine(" / Avrage weekley Spendings: " + earnings)
+		EndSr
+
+		// ///////////////////////////////////////////////////////////////////////////////////////////////
+		BegSr StatSum Access(*protected)
+			dclFld tmp Type( List(*Of string))
+			dclFld tmp2 Type( List(*Of string))
+			dclFld earnings type(*packed) len(10,2) inz(0)
+			dclFld spending type(*packed) len(10,2) inz(0)
+			dclFld i type(int32) inz(0)
+
+			Console.Clear()
+			tmp = db.showAsList("SELECT ernings FROM cashout;")
+			tmp2 = db.showAsList("SELECT price FROM spendings;")
+
+			earnings *Eq getSum(tmp)
+			spending *Eq getSum(tmp2)
+
+			earnings = (earnings - spending) 
+			
+			Console.WriteLine("  _______________________________________")
+			Console.WriteLine(" / Total Net Earnings: " + earnings)
+		EndSr
+
+		// ///////////////////////////////////////////////////////////////////////////////////////////////
+		BegSr StatWeekEst Access(*protected)
+			dclFld tmp Type(DataTable)
+			dclFld i type(int32) inz(0)
+
+			Console.Clear()
+			tmp = db.showAsTable("select sum(worth), date from inventory where YEAR(date) = YEAR(NOW()) group by date;")
+
+			
+			DoWhile i < tmp.Rows.Count
+				If %rem (i, 20) = 0
+					Console.WriteLine(" __________________________")
+					Console.WriteLine(String.Format("| {0,10} {1,13} |","Earnings","Date"))
+					Console.WriteLine("|--------------------------|")
+				EndIF
+
+				Console.WriteLine(String.Format("|{0,10} {1,15}|",tmp.Rows[i][0].ToString(), Convert.ToDateTime(tmp.Rows[i][1].ToString()).ToString("M/d/yyyy")))
+				i *eq i+1
+			EndDo
+		EndSr
+		
+		// ///////////////////////////////////////////////////////////////////////////////////////////////
+		BegSr StatNet Access(*protected)
+			dclFld tmp Type(DataTable)
+			dclFld i type(int32) inz(0)
+			dclFld sname type(string)
+			dclFld cost type(string)
+			dclFld numcans type(string)
+			dclFld sales type(string)
+			dclFld ppcan type(string)
+			dclFld netpr type(string)
+
+			Console.Clear()
+			tmp = db.showAsTable("SELECT SodaName, (Price + crv), cancount, ((Price + crv) / cancount), Worth, (Worth - (Price + crv)) FROM Inventory INNER JOIN Sodas ON Sodas.SodaID = Inventory.sodaID WHERE YEAR(date) = YEAR(NOW()) ORDER BY Inventory.id DESC;")
+
+			
+			DoWhile i < tmp.Rows.Count
+				If %rem (i, 20) = 0
+					Console.WriteLine("___________________________________________________________________________________________")
+				    Console.WriteLine( "    NAME      |    COSTS     |  # OF CANS   | PRICE PER CAN |   SALES       |      NET     ")
+				    Console.WriteLine( "-------------------------------------------------------------------------------------------")
+				EndIF
+
+				sname *Eq tmp.Rows[i][0].ToString()
+				cost *Eq Convert.ToDouble(tmp.Rows[i][1].ToString()).ToString("C")
+				numCans *Eq Convert.ToDouble(tmp.Rows[i][2].ToString()).ToString("N0")
+				ppcan *Eq Convert.ToDouble(tmp.Rows[i][3].ToString()).ToString("C")
+				sales *Eq Convert.ToDouble(tmp.Rows[i][4].ToString()).ToString("C")
+				netpr *Eq Convert.ToDouble(tmp.Rows[i][5].ToString()).ToString("C")
+				
+				Console.WriteLine(String.Format("{0,14}{1,15}{2,15}{3,16}{4,16}{5,16}", sname, cost, numCans, ppcan, sales, netpr))
+				i *eq i+1
+			EndDo
+		EndSr
+		
+		// ///////////////////////////////////////////////////////////////////////////////////////////////
+		BegSr StatStdDiv Access(*protected)
+			DclFld spending Type(*Of String)
+			DclFld earnings Type(*Of String)
+			DclFld Vspn Type(*Of String)
+			DclFld Vern Type(*Of String)
+			DclFld dt1 Type(DataTable)
+			DclFld dt2 Type(DataTable)
+			DclFld spn Type(Double)
+			DclFld ern Type(Double)
+			DclFld Aspn Type(Double)
+			DclFld Aern Type(Double)
+
+			spending *Eq db.showAsList("SELECT price FROM spendings WHERE YEAR(NOW()) = YEAR(date);")
+			earnings *Eq db.showAsList("SELECT ernings FROM cashout WHERE YEAR(NOW()) = YEAR(date);")
+
+			Aspn = getAvrage(spndings)
+			Aern = getAvrage(earnings)
+
+			Vspn = db.showAsList("SELECT (price * price) - " + Aspn + " FROM spendings WHERE YEAR(NOW()) = YEAR(date);")
+			Vern *Eq db.showAsList("SELECT (ernings * ernings) - " + Aern + " FROM cashout WHERE YEAR(NOW()) = YEAR(date);")
+
+			spn *Eq System.Math.Sqrt(getAvrage(Vspn))
+			ern *Eq System.Math.Sqrt(getAvrage(Vern))
+
+			dt1 = db.showAsTable("select date, price, ((price - " + Aspn + ") / " + spn + ") AS stddiv FROM spendings WHERE YEAR(NOW()) = YEAR(date);")
+			dt2 = db.showAsTable("select ernings, ernings, ((ernings - " + Aern + ") / " + ern + ") AS stddiv FROM cashout WHERE YEAR(NOW()) = YEAR(date);")
+			Console.Clear()
+
+
+		EndSr
+		// ///////////////////////////////////////////////////////////////////////////////////////////////
+		BegSr currentCashOut Access(*protected)
+			DclFld tmp Type(DataTable)
+			DclFld sum Type(*Packed) Len(10,2) inz(0)
+			DclFld i Type(Int32) inz(0)
+			DclFld year Type(double) Inz(0)
+			DclFld sel Type(String)
+
+			Console.WriteLine(" _______________________________")
+			Console.Write("/ Enter year to lookup ")
+			sel = Console.ReadLine()
+
+			If IsNumeric(sel) = *true
+				year = %int (Convert.ToDouble(sel))
+			EndIf
+
+			tmp = db.showAsTable("SELECT * FROM cashout y where YEAR(date) = " + year)
+
+			DoWhile i < tmp.Rows.Count
+				If %rem (i, 20) = 0
+					Console.WriteLine(" __________________________")
+					Console.WriteLine(String.Format("| {0,10} {1,13} |","Earnings","Date"))
+					Console.WriteLine("|--------------------------|")
+				EndIF
+
+				Console.WriteLine(String.Format("|{0,10} {1,15}|",tmp.Rows[i][0].ToString(), Convert.ToDateTime(tmp.Rows[i][1].ToString()).ToString("M/d/yyyy")))
+
+				sum *Eq sum + Convert.ToDouble(tmp.Rows[i][0].ToString())
+				i *eq i+1
+			EndDo
+
+			Console.WriteLine("")
+			Console.WriteLine("Total: " + sum.ToString("C"))
+			Console.WriteLine("Over " + tmp.Rows.Count.ToString("N") + " weeks")
+		EndSr
+
+		// ///////////////////////////////////////////////////////////////////////////////////////////////
+		BegSr currentSpend Access(*protected)
+			DclFld tmp Type(DataTable)
+			DclFld sum Type(*Packed) Len(10,2) inz(0)
+			DclFld i Type(Int32) inz(0)
+			DclFld year Type(double) Inz(0)
+			DclFld sel Type(String)
+
+			Console.WriteLine(" _______________________________")
+			Console.Write("/ Enter year to lookup ")
+			sel = Console.ReadLine()
+
+			If IsNumeric(sel) = *true
+				year = %int (Convert.ToDouble(sel))
+			EndIf
+
+			tmp = db.showAsTable("SELECT * FROM spendings where YEAR(date) =" + year)
+
+			DoWhile i < tmp.Rows.Count
+				If %rem (i, 20) = 0
+					Console.WriteLine(" __________________________")
+					Console.WriteLine(String.Format("| {0,10} {1,13} |","Spendings","Date"))
+					Console.WriteLine("|--------------------------|")
+				EndIF
+
+				Console.WriteLine(String.Format("|{0,10} {1,15}|",tmp.Rows[i][0].ToString(), Convert.ToDateTime(tmp.Rows[i][1].ToString()).ToString("M/d/yyyy")))
+
+				sum *Eq sum + Convert.ToDouble(tmp.Rows[i][0].ToString())
+				i *eq i+1
+			EndDo
+
+			Console.WriteLine("")
+			Console.WriteLine("Total: " + sum.ToString("C"))
+			Console.WriteLine("Over " + tmp.Rows.Count.ToString("N") + " weeks")
+		EndSr
+
+		// ///////////////////////////////////////////////////////////////////////////////////////////////
+		BegSr currentInven Access(*protected)
+			DclFld tmp Type(DataTable)
+			DclFld sum Type(*Packed) Len(10,2) inz(0)
+			DclFld i Type(Int32) inz(0)
+			DclFld year Type(double) Inz(0)
+			DclFld sel Type(String)
+
+			Console.WriteLine(" _______________________________")
+			Console.Write("/ Enter year to lookup ")
+			sel = Console.ReadLine()
+
+			If IsNumeric(sel) = *true
+				year = %int (Convert.ToDouble(sel))
+			EndIf
+
+			tmp = db.showAsTable("SELECT SodaName,cancount,price,crv,worth,net,date FROM inventory INNER JOIN sodas ON sodas.SodaID = inventory.SodaID where YEAR(date) =" + year)
+
+			DoWhile i < tmp.Rows.Count
+				If %rem (i, 20) = 0
+					Console.WriteLine(" __________________________")
+					Console.WriteLine(String.Format("| {0,10} {1,13} |","Spendings","Date"))
+					Console.WriteLine("|--------------------------|")
+				EndIF
+
+				Console.WriteLine(String.Format("|{0,10} {1,15},{2,10} {3,15},{4,10} {5,15},{6,10} |", tmp.Rows[i][0].ToString(), tmp.Rows[i][1].ToString()), tmp.Rows[i][2].ToString(), tmp.Rows[i][3].ToString(), tmp.Rows[i][4].ToString(), tmp.Rows[i][5].ToString(), tmp.Rows[i][6].ToString())
+				
+
+				sum *Eq sum + Convert.ToDouble(tmp.Rows[i][0].ToString())
+				i *eq i+1
+			EndDo
+
+			Console.WriteLine("")
+			Console.WriteLine("Total: " + sum.ToString("C"))
+			Console.WriteLine("Over " + tmp.Rows.Count.ToString("N") + " weeks")
+		EndSr
+
+		BegSr maintUpInv Access(*protected)
+			DclFld sel Type(String)
+			DclFld tbl Type(DataTable)
+			DclFld i Type(Int32) inz(0)
+			DclFld uperLim Type(Int32) inz(0)
+			DclFld lowrLim Type(Int32) inz(0)
+			DclFld selID Type(Int32) inz(0)
+			DclFld NewVal Type(String) inz("")
+			DclFld col Type(List(*Of String))
+			DclFld intin Type(List(*Of Int32))
+			DclFld douin Type(List(*Of Double))
+			DclFld datin Type(List(*Of DateTime))
+
+			
+			tbl = db.showAsTable("SELECT id,SodaName,cancount,price,crv,worth,net,date FROM inventory INNER JOIN sodas ON sodas.SodaID = inventory.SodaID WHERE YEAR(date) = 2016 LIMIT 30")
+
+			// clear and display the last 30 records
+			Console.Clear()
+			Console.WriteLine("______________________________________________________________________")
+				Console.WriteLine(String.Format("{0,5} {1,10} {2,9} {3,7} {4,7} {5,7} {6,7} {7,10}","RecID","name","can cnt","price","crv","worth","net","date"))
+			Console.WriteLine("______________________________________________________________________")
+			DoWhile i < tbl.Rows.Count
+				Console.WriteLine(String.Format("{0,5} {1,10} {2,9} {3,7} {4,7} {5,7} {6,7} {7,10}",tbl.Rows[i][0],tbl.Rows[i][1],tbl.Rows[i][2],Convert.ToDouble(tbl.Rows[i][3]).ToString("c"),Convert.ToDouble(tbl.Rows[i][4]).ToString("c"),Convert.ToDouble(tbl.Rows[i][5]).ToString("c"),Convert.ToDouble(tbl.Rows[i][6]).ToString("c"),Convert.ToDateTime(tbl.Rows[i][7]).ToString("M/d/yyyy")))
+				i *Eq i + 1
+			EndDo
+
+			uperLim *Eq %int(tbl.Rows[0][0].ToString())
+			lowrLim *Eq %int(tbl.Rows[tbl.Rows.Count -1][0].ToString())
+
+			Do
+				// prompt user for recored number
+				Console.WriteLine(" _________________________________")
+				Console.WriteLine("/ Enter recID to update: ")
+				sel = Console.ReadLine()
+			
+				If *this.IsNumeric(sel)
+					selID *Eq %int(sel)
+				Else
+					selID = -1
+				EndIf
+
+				If selID >= lowrLim And selID <= uperLim
+					IF db.getEl("inventory", "id", "id=" + selID) <> ""
+						leave
+					Else
+						Console.WriteLine("<<Error: Invalid Index >>")
+					EndIf
+				EndIf
+			End
+
+			i *Eq 0
+			col *Eq *new List(*Of String)()
+			intin *Eq *new List(*Of Int32)()
+			Datin *Eq *new List(*Of DateTime)()
+			*this.DisplaySoda()
+			Console.WriteLine("Enter New Information use * to keep value")
+			// get information to update
+			Do
+				If NewVal <> "*"
+					
+					Select
+						when i = 0
+							col.Add("SodaID")
+							If *this.IsNumeric(NewVal)
+								intin.Add( %int(NewVal))
+							Else
+								intin.Add(0)
+							EndIf
+						when i = 1
+							col.Add("cancount")
+							If *this.IsNumeric(NewVal)
+								intin.Add( %int(NewVal))
+							Else
+								intin.Add(0)
+							EndIf
+						when i = 2
+							col.Add("price")
+							If *this.IsNumeric(NewVal)
+								douin.Add( Convert.ToDouble(NewVal))
+							Else
+								douin.Add(0)
+							EndIf
+						when i = 3
+							col.Add("crv")
+							If *this.IsNumeric(NewVal)
+								douin.Add( Convert.ToDouble(NewVal))
+							Else
+								douin.Add(0)
+							EndIf
+						when i = 4
+							col.Add("worth")
+							If *this.IsNumeric(NewVal)
+								douin.Add( Convert.ToDouble(NewVal))
+							Else
+								douin.Add(0)
+							EndIf
+						when i = 4
+							col.Add("net")
+							If *this.IsNumeric(NewVal)
+								douin.Add( Convert.ToDouble(NewVal))
+							Else
+								douin.Add(0)
+							EndIf
+						when i= 5
+							col.Add("datin")
+							try 
+								datin.Add(Convert.ToDateTime( NewVal))
+							catch ex System.Exception
+								datin.Add(DateTime.Now)
+							EndTry
+					EndSl
+				EndIf
+				if intin.Count = 0
+					intin *Eq *Nothing
+				EndIf
+				if douin.Count = 0
+					douin *Eq *Nothing
+				EndIf
+				if datin.Count = 0
+					datin *Eq *Nothing
+				EndIf
+				db.update("inventory", col, *Nothing,douin,intin,*Nothing,datin,"id="+selID)
+				i *Eq i + 1
+			End
+		EndSr
+		// ///////////////////////////////////////////////////////////////////////////////////////////////
+		BegFunc getSum Access(*public) type(Double)
+			DclSrParm list Type(List(*Of String))
+
+			DclFld tmp Type(Double) Inz(0)
+			DclFld i Type(Int32) inz(0)
+
+			DoWhile i < list.Count
+				Try
+					tmp *Eq tmp + System.Convert.ToDouble(list[i])
+				Catch Error System.Exception
+					tmp *Eq tmp + 0
+				EndTry
+
+				i *eq i+1
+			EndDo
+
+			leavesr tmp
+		EndFunc
+		// ///////////////////////////////////////////////////////////////////////////////////////////////
+		BegFunc getAvrage Access(*public) type(Double)
+			DclSrParm list Type(List(*Of String))
+
+			leaveSr getSum(list) / list.Count
+		EndFunc
+EndClass
