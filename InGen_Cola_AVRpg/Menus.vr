@@ -163,11 +163,14 @@ BegClass Menus Access(*Public)
 			Console.Clear()
 			DoWhile doLoop =1
 				Console.WriteLine(" ______________________________________________")
-				Console.WriteLine("| InGen Cola                 Current Records   |")
+				Console.WriteLine("| InGen Cola                 Data Maintanince  |")
 				Console.WriteLine("|----------------------------------------------|")
 				Console.WriteLine("| UdatInv         update inventory records     |")
 				Console.WriteLine("| UdatCsh         update cash colected records |")
 				Console.WriteLine("| UdatSpn         update spending records      |")
+				Console.WriteLine("| delinv          Delete inventory record      |")
+				Console.WriteLine("| delcsh          Delete cash out records      |")
+				Console.WriteLine("| delspn          Delete spending records      |")
 				Console.WriteLine("| AddSoda         add new soda flavor          |")
 				Console.WriteLine("| CD              Back to Main Menu            |")
 				Console.WriteLine("|______________________________________________|")
@@ -182,6 +185,7 @@ BegClass Menus Access(*Public)
 					when sel = "udatcsh"
 					when sel = "udatspn"
 					when sel = "addsoda"
+						maintAddSoda()
 					when sel = "cd"
 						LeaveSr 0
 				EndSl
@@ -631,6 +635,7 @@ BegClass Menus Access(*Public)
 			Console.WriteLine("Over " + tmp.Rows.Count.ToString("N") + " weeks")
 		EndSr
 
+		// ///////////////////////////////////////////////////////////////////////////////////////////////
 		BegSr maintUpInv Access(*protected)
 			DclFld sel Type(String)
 			DclFld tbl Type(DataTable)
@@ -756,6 +761,57 @@ BegClass Menus Access(*Public)
 				i *Eq i + 1
 			End
 		EndSr
+
+		// ///////////////////////////////////////////////////////////////////////////////////////////////
+		BegSr maintAddSoda Access(*public)
+			DclFld col Type (List(Of String))
+			DclFld strin Type (List(Of String))
+			DclFld sodlist Type (List(*Of String))
+			DclFld raw Type (String)
+			DclFld tmp Type (String)
+			DclFld isCounted Type (Boolean) inz (*false)
+			DclFld ans Type (String)
+
+			col *Eq *new List(*Of String)()
+			strin *Eq *new List(*Of String)()
+			sodlist = db.showAsList("SELECT LOWER(SodaName) FROM Sodas;")
+
+			col.Add("SodaName")
+			col.Add("purchasFrom")
+			col.Add("Note")
+
+			DoWhile i < col.Count - 1
+				Console.Write(col(i) & ": ")
+				raw = Console.ReadLine
+
+				If col(i) = "SpdaName"
+					DoWhile u < sodList.count
+						If sodlist(i) = raw.ToLower()
+							isCounted = True
+							Exit For
+						End If
+					EndDo
+					If isCounted = **rue 
+						Console.WriteLine("Soda already in list, do you want to ignore? (y/n)")
+						ans = Console.ReadLine
+						ans = ans.toLower()
+						If ans = "y" Or ans = "yes" 
+							leaveSr
+						Else
+							i *Eq i - 1
+						EndIf
+					EndIf
+				EndIf
+
+				If i >= 0
+					strin.Add(raw)
+				End If
+			EndDo
+
+			db.Insert("Sodas", col, strin, *nothing, *nothing, *nothing, *nothing)
+			Console.WriteLine(String.Format("{0} {1}",strin(0), "is added to the system."))
+		EndSr
+
 		// ///////////////////////////////////////////////////////////////////////////////////////////////
 		BegFunc getSum Access(*public) type(Double)
 			DclSrParm list Type(List(*Of String))
