@@ -4,11 +4,11 @@
            77 cnet          type String.
            77 con           type MySql.Data.MySqlClient.MySqlConnection.
           
-      * ////////////////////////////////////////////////////////////////////////////////////////////////////dracmus\roy
+      * ////////////////////////////////////////////////////////////////////////////////////////////////////
        method-id new final public.
        local-storage section.
        procedure division.
-           move "Server=localhost; Database=soda; Uid=root; PASSWORD=vig/&*649/TD10036em1271;" to cnet.
+           move "Server=localhost; Database=soda; Uid=root; PASSWORD=vig/&*649/-TD10036em1271;" to cnet.
            move new type MySql.Data.MySqlClient.MySqlConnection to con.
            move cnet to con::ConnectionString.
            goback.

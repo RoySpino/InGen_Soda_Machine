@@ -1,20 +1,55 @@
-       program-id. Program1 as "sodaCOBOL.Program1".
+       program-id. Program1 as "Soda.Program1".
 
        data division.
        working-storage section.
-           77 sel              type String.
-           77 menfunc          type sodaCOBOL.menuFunctions value new type sodaCOBOL.menuFunctions.
-           77 mainloop         type Boolean.
-           77 subloop          type Boolean.
+           77 doloop               type Boolean.
+           77 doSubLoop            type Boolean.
+           77 sel                  type String.
+           77 mdriver              type menuDriver.
+       
        procedure division.
-           move true to mainloop.
-           
-           perform menu
-           until mainloop is equal to false.
-           
+           move true to doloop.
+           move new menuDriver to mdriver.
+           perform mainloop
+           until doloop is equal to false.
            goback.
-       menu.
+       mainloop.
+           perform menu.
+           display ">>> " no advancing.
+           accept sel.
            
+           move true to doSubLoop.
+           move sel::ToLower to sel.
+           
+           if sel = "exit" then
+               move false to doloop
+           else
+               if sel = "new" then
+                   invoke type Console::Clear()
+                   move true to doSubLoop
+                   perform newmenu
+                   until doSubLoop = false
+               else
+                   if sel = "stats" then
+                       invoke type Console::Clear()
+                       move true to doSubLoop
+                       perform statsMenuedisp
+                       until dosubloop =false
+                   else
+                       if sel = "maint" then
+                           invoke type Console::Clear()
+                           move true to doSubLoop
+                           perform maintMenueDisp
+                           until doSubLoop = false
+                       else
+                           if sel = "current"
+                               invoke type Console::Clear()
+                               move true to doSubLoop
+                               perform currMenueDisp
+                               until doSubLoop = false
+           end-if.
+           
+       menu.
            display " ______________________________________________".
            display "| InGen Cola                                   |".
            display "|----------------------------------------------|".
@@ -24,112 +59,15 @@
            display "| Maint           Database Maintanince         |".
            display "| EXIT            Quit Program                 |".
            display "|______________________________________________|".
-           display ">>> " no advancing.
+       newmenu.
+           move mdriver::newMenueMain to doSubLoop.
+               
+       statsMenuedisp.
+           move mdriver::statMenue to doSubLoop.
            
-           accept sel.
-           move sel::ToLower() to sel.
-           
-           if sel = "exit"
-               move false to mainloop
-               else if sel = "new"
-                   move true to subloop
-                   invoke type Console::Clear()
-                   perform NewMenu
-                   until subloop = false
-                   else if sel = "stats"
-                       move true to subloop
-                       invoke type Console::Clear()
-                       perform StatsMenu
-                       until subloop = false
-                       else if sel = "current"
-                           move true to subloop
-                           invoke type Console::Clear()
-                           perform currMenu
-                           until subloop =false
-           end-if.
-       NewMenu.
-           display " ______________________________________________".
-           display "| InGen Cola                 New Records       |".
-           display "|----------------------------------------------|".
-           display "| Profets         Enter dayley profets         |".
-           display "| Purchase        Enter cost of soda spent     |".
-           display "| CD              Back to Main Menu            |".
-           display "|______________________________________________|".
-           display ">>> " no advancing.
-           
-           accept sel.
-           move sel::ToLower() to sel.
-           
-           if sel = "cd"
-               invoke type Console::Clear()
-               move false to subloop 
-               else if sel = "purchase"
-                   invoke menfunc::newPurchase
-                   else if sel = "profets"
-                       invoke menfunc::newProfets
-           end-if.
-       StatsMenu.
-           display " ______________________________________________".
-           display "| InGen Cola                 Statistics        |".
-           display "|----------------------------------------------|".
-           display "| add             Add this years profets       |".
-           display "| avgg            Get avg. grose for the year  |".
-           display "| avgn            Get avg. net for this year   |".
-           display "| avgs            Get avg. spendings           |".
-           display "| net             Calculate profets per-can    |".
-           display "| sum             Calculate Net Profets        |".
-           display "| weekest         Estemate weekly profets      |".
-           display "| CD              Back to Main Menu            |".
-           display "|______________________________________________|".
-           display ">>> " no advancing.
-           
-           accept sel.
-           move sel::ToLower() to sel.
-           
-           if sel = "cd"
-               invoke type Console::Clear()
-               move false to subloop
-           else if sel = "add"
-               invoke menfunc::statAdd()
-               else if sel = "avgg"
-                   invoke menfunc::statAvgg()
-                   else if sel = "avgn"
-                       invoke menfunc::statAvgn()
-                       else if sel = "avgs"
-                           invoke menfunc::statAvgs()
-                           else if sel = "net"
-                               invoke menfunc::statNet()
-                               else if sel = "sum"
-                                   invoke menfunc::statSum()
-                                   else if sel = "weekest"
-                                       invoke menfunc::statWeek()
-           end-if.
-       currMenu.
-           display " ______________________________________________".
-           display "| InGen Cola                 Current Records   |".
-           display "|----------------------------------------------|".
-           display "| CashOut         Show all profets collected   |"
-           display "| Spendings       Show spending records        |".
-           display "| inventory       Show weekly inventory        |".
-           display "| Maint           Goto Maintanince Menu        |".
-           display "| CD              Back to Main Menu            |".
-           display "|______________________________________________|".
-           display ">>> " no advancing.
-           
-           accept sel.
-           move sel::ToLower() to sel.
-           
-           if sel = "cd"
-               invoke type Console::Clear()
-               move false to subloop
-               else if sel = "cashout"
-                   invoke menfunc::curCashout()
-               else if sel = "spendings"
-                   invoke menfunc::curSpendings()
-                   else if sel = "inventory"
-                       invoke menfunc::curInventory()
-                       else if sel = "maint"
-                           display ""
-           end-if.
-           
+       maintMenueDisp.
+           move mdriver::maintMenue to doSubLoop.
+               
+       currMenueDisp.
+           move mdriver::currentMenue to doSubLoop.
        end program Program1.
