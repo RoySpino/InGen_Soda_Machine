@@ -183,7 +183,15 @@ BegClass Menus Access(*Public)
 					when sel = "udatinv"
 						maintUpInv()
 					when sel = "udatcsh"
+						upCashOut()
 					when sel = "udatspn"
+						udatSpnd()
+					when sel = "delinv"
+						delInv()
+					when sel = "delcsh"
+						delCashOut()
+					when sel = "delspn"
+						delSpending()
 					when sel = "addsoda"
 						maintAddSoda()
 					when sel = "cd"
@@ -812,6 +820,364 @@ BegClass Menus Access(*Public)
 			Console.WriteLine(String.Format("{0} {1}",strin(0), "is added to the system."))
 		EndSr
 
+		// ///////////////////////////////////////////////////////////////////////////////////////////////
+		BegSr upCashOut Access(*public)
+			DclFld col Type(List(*Of String))
+			DclFld douin Type(List(*Of Double))
+			DclFld Datin Type(List(*Of DateTime))
+			DclFld recUl Type(Int32)
+			DclFld recLl Type(Int32)
+			DclFld recid type(Int32)
+			DclFld raw Type(String)
+
+			Console.Clear()
+			If showTop20CashOut() = *false 
+				LeaveSr
+			EndIF
+
+			col *Eq *New Type(List(*Of String))
+			douin *Eq *New Type(List(*Of Double))
+			datin *Eq *New Type(List(*Of DateTime))
+
+			col.Add("ernings")
+        	col.Add("date")
+
+			raw = db.getEl("CashOut", "MIN(id)", "YEAR(date) = YEAR(NOW()) ORDER BY date DESC LIMIT 20;")
+			recLl = Convert.ToInt32(raw)
+			raw = db.getEl("CashOut", "MAX(id)", "YEAR(date) = YEAR(NOW()) ORDER BY date DESC LIMIT 20;")
+			recUl = Convert.ToInt32(raw)
+
+			recid = getRecID(recLl, recUl)
+			Console.WriteLine("Enter New Values, use * to keep current values")
+
+			DoWhile
+				Console.Write("Earnings: ")
+				raw = Console.ReadLine()
+				If raw <> "*" 
+					If IsNumeric(raw) = *true
+						douin.Add(Convert.ToDouble(raw))
+						leave
+					Else
+						Console.WriteLine("<<Error: numeric value is invalid>>")
+					EndIf
+				Else
+					col.RemoveAt(0)
+                	douin = *nothing
+					leave
+				EndIf
+			EndDo
+
+			DoWhile *true
+				Console.Write("Date: ")
+				raw = Console.ReadLine()
+				If raw <> "*" 
+					Try
+						datin.Add(Convert.ToDateTime(raw))
+					Catch Error System.Exception
+						Console.WriteLine("<<Error: date value is invalid>>")
+					EndTry
+				Else
+					If col.Count > 1
+						col.RemoveAt(1)
+					Else
+						col.RemoveAt(0)
+					EndIf
+					datin = *nothing
+					leave
+				EndIf
+			EndDo
+
+			If col.Count > 0
+				db.update("CashOut", col, *Nothing, douin, *Nothing, *Nothing, datin, "id=" & recid)
+			EndIf
+		EndSr
+		
+		// ///////////////////////////////////////////////////////////////////////////////////////////////
+		BegSr udatSpnd Access(*public)
+			DclFld col Type(*of String)
+			DclFld douin Type(*of Double)
+			DclFld Datin Type(*of DateTime)
+
+			Console.Clear()
+			If showTop20Spending() = *false 
+				LeaveSr
+			EndIF
+
+			col *Eq *New Type(List(*Of String))
+			douin *Eq *New Type(List(*Of Double))
+			datin *Eq *New Type(List(*Of DateTime))
+
+			raw = db.getEl("Spendings", "MIN(id)", "YEAR(date) = YEAR(NOW()) ORDER BY date DESC LIMIT 20;")
+			rowidLl = Convert.ToInt32(raw)
+			raw = db.getEl("Spendings", "MAX(id)", "YEAR(date) = YEAR(NOW()) ORDER BY date DESC LIMIT 20;")
+			rowidUl = Convert.ToInt32(raw)
+
+			col.Add("price")
+			col.Add("date")
+
+			rowID = getRecID(rowidLl, rowidUl)
+
+			DoWhile *true
+				Console.Write("Earnings: ")
+				raw = Console.ReadLine()
+				If raw <> "*"
+					If isNumeric(raw) = *true
+						douin.Add(Convert.ToDouble(raw))
+						Exit While
+					Else
+						Console.WriteLine("<<Error: numeric value is invalid>>")
+					EndIf
+				Else
+					col.RemoveAt(0)
+                	douin = *nothing
+				EndIf
+			EndDO
+
+			DoWhile *true
+				Console.Write("Date: ")
+				raw = Console.ReadLine()
+				If raw <> "*" 
+					Try
+						datin.Add(Convert.ToDateTime(raw))
+						leave
+					Catch Error System.Exception
+						Console.WriteLine("<<Error: date value is invalid>>")
+					EndTry
+				Else
+					If col.Count > 1 
+						col.RemoveAt(1)
+					Else
+						col.RemoveAt(0)
+					EndIf
+					datin = *nothing
+				EndIf
+			EndDo
+
+			If col.Count > 0
+				db.update("Spendings", col, *Nothing, douin, *Nothing, *Nothing, datin, "id =" & rowID)
+			End If
+		EndSr
+
+		// ///////////////////////////////////////////////////////////////////////////////////////////////
+		BegSr delInv Access(*public)
+			DclFld recUl Type(Int32)
+			DclFld recLl Type(Int32)
+			DclFld recid type(Int32)
+			DclFld raw Type(String)
+
+			Console.Clear()
+			If showTop20Inventory() = False Then
+				LeaveSr
+			End If
+
+			raw = db.getEl("Inventory", "MIN(id)", "YEAR(date) = YEAR(NOW()) ORDER BY date DESC LIMIT 20;")
+			recLl = Convert.ToInt32(raw)
+			raw = db.getEl("Inventory", "MAX(id)", "YEAR(date) = YEAR(NOW()) ORDER BY date DESC LIMIT 20;")
+			recUl = Convert.ToInt32(raw)
+
+			rowID = getRecID(recLl, recUl)
+
+			Console.Write("Are you sure you want to delete record: " & rowID & " (y/n): ")
+			raw = Console.ReadLine()
+			raw = raw.ToLower()
+
+			If raw = "y" Or raw = "yes"
+				db.runQuery(String.Format("DELETE FROM Inventory WHERE id={0};", rowID)
+			EndIf
+		EndSr
+
+		// ///////////////////////////////////////////////////////////////////////////////////////////////
+		BegSr delCashOut Access(*public)
+			DclFld recUl Type(Int32)
+			DclFld recLl Type(Int32)
+			DclFld recid type(Int32)
+			DclFld raw Type(String)
+
+			Console.Clear()
+			If showTop20CashOut() = False Then
+				LeaveSr
+			End If
+
+			raw = db.getEl("Inventory", "MIN(id)", "YEAR(date) = YEAR(NOW()) ORDER BY date DESC LIMIT 20;")
+			recLl = Convert.ToInt32(raw)
+			raw = db.getEl("Inventory", "MAX(id)", "YEAR(date) = YEAR(NOW()) ORDER BY date DESC LIMIT 20;")
+			recUl = Convert.ToInt32(raw)
+
+			rowID = getRecID(recLl, recUl)
+
+			Console.Write("Are you sure you want to delete record: " & rowID & " (y/n): ")
+			raw = Console.ReadLine()
+			raw = raw.ToLower()
+
+			If raw = "y" Or raw = "yes"
+				db.runQuery(String.Format("DELETE FROM CashOut WHERE id={0};", rowID)
+			EndIf
+		EndSr
+
+		// ///////////////////////////////////////////////////////////////////////////////////////////////
+		BegSr delSpending Access(*public)
+			DclFld recUl Type(Int32)
+			DclFld recLl Type(Int32)
+			DclFld recid type(Int32)
+			DclFld raw Type(String)
+
+			Console.Clear()
+			If showTop20CashOut() = False Then
+				LeaveSR
+			End If
+
+			raw = db.getEl("Inventory", "MIN(id)", "YEAR(date) = YEAR(NOW()) ORDER BY date DESC LIMIT 20;")
+			recLl = Convert.ToInt32(raw)
+			raw = db.getEl("Inventory", "MAX(id)", "YEAR(date) = YEAR(NOW()) ORDER BY date DESC LIMIT 20;")
+			recUl = Convert.ToInt32(raw)
+
+			rowID = getRecID(recLl, recUl)
+
+			Console.Write("Are you sure you want to delete record: " & rowID & " (y/n): ")
+			raw = Console.ReadLine()
+			raw = raw.ToLower()
+
+			If raw = "y" Or raw = "yes"
+				db.runQuery("DELETE FROM Spendings WHERE id={0};", rowID)
+			EndIf
+		EndSr
+
+		// ///////////////////////////////////////////////////////////////////////////////////////////////
+		BegFunc showTop20CashOut Access(*public) Type(Boolean)
+			DclFld dt Type(DateTime)
+			DclFld tmp Type(String) inz("")
+			DclFld tblStr Type(String) inz("")
+			DclFld r Type(Int32) Inz(0)
+
+			dt = db.showAsTable("SELECT * FROM CashOut ORDER BY id DESC LIMIT 20;")
+
+			If dt.Rows.Count > 0
+				Console.WriteLine(" _________________________________________")
+                Console.WriteLine("|     ID      |  EARNINGS   |    DATE     |")
+                Console.WriteLine("|-----------------------------------------|")
+			
+				DoWhile r < dt.Rows.Count
+					tmp *Eq "|"
+
+					tblStr *Eq String.Format("{0,13}",dt.Rows(r)(0).ToString())
+					tmp *Eq String.Format("{0}{1}",tmp, tblStr)
+					tblStr *Eq tring.Format("{0,14}",Convert.ToDouble(dt.Rows(r)(1).ToString()).ToString("C"))
+					tmp *Eq String.Format("{0}{1}",tmp, tblStr)
+					tblStr *Eq String.Format("{0,14}",Convert.ToDateTime(dt.Rows(r)(2).ToString()).ToString("M/d/yyyy"))
+					tmp *Eq String.Format("{0}{1}",tmp, tblStr)
+
+					r *Eq r + 1
+					Console.WriteLine(tmp)
+				EndDO
+			Else
+				Console.WriteLine("<<Error: No records to display>>")
+				LeaveSr *false
+			EndIf
+			LeaveSr *true
+		EndFunc
+
+		// ///////////////////////////////////////////////////////////////////////////////////////////////
+		BegFunc showTop20Inventory Access(*public) Type(Boolean)
+			DclFld dt Type(DateTime)
+			DclFld tmp Type(String) inz("")
+			DclFld tblRow Type(String) inz("")
+			DclFld r Type(Int32) Inz(0)
+			DclFld c Type(Int32) Inz(0)
+
+			dt = db.showAsTable("SELECT * FROM CashOut ORDER BY id DESC LIMIT 20;")
+
+			If dt.Rows.Count > 0
+				Console.WriteLine(" ________________________________________________________________________________________________________________________")
+                Console.WriteLine("      ID      |    NAME      |  # OF CANS   |    PRICE     |      CRV      |    WORTH     |      NET     |      DATE   ")
+                Console.WriteLine("------------------------------------------------------------------------------------------------------------------_------")
+			
+				If dt.Rows.Count() < 20 
+					rowlim *Eq dt.Rows.Count() - 1
+				Else
+					rowlim *Eq 19
+				EndIf
+
+				DoWhile r < dt.Rows.Count
+					DoWhile c < 7
+						Try
+							If isNumeric(dt.Rows(r)(c).ToString()) = *false And c <> 1 
+								tblRow *Eq String.Format("{0}{1,16} ", tblRow, Convert.ToDateTime(dt.Rows(r)(c).ToString()).ToString("M/d/yyyy"))
+							Else
+								tblRow *Eq String.Format("{0}{1,15} ", tblRow, dt.Rows(r)(c).ToString())
+							EndIf
+						Catch xt As Exception
+							tblRow *Eq String.Format("{0}{1,15} ", tblRow, dt.Rows(r)(c).ToString())
+						End Try
+					EndDo
+					Console.WriteLine(tblRow)
+                	tblRow *Eq ""
+					c *Eq 0
+				EndDO
+			Else
+				Console.WriteLine("<<Error: No records to display>>")
+				LeaveSr *false
+			EndIf
+			LeaveSr *true
+		EndFunc
+
+		// ///////////////////////////////////////////////////////////////////////////////////////////////
+		BegFunc showTop20Spending Access(*public) Type(Boolean)
+			DclFld dt Type(DateTime)
+			DclFld tmp Type(String) inz("")
+			DclFld tblRow Type(String) inz("")
+			DclFld r Type(Int32) Inz(0)
+			DclFld c Type(Int32) Inz(0)
+
+			dt = db.showAsTable("SELECT * FROM Spendings ORDER BY id DESC LIMIT 20;")
+
+			If dt.Rows.Count > 0 Then
+				Console.WriteLine(" __________________________________________________" & vbNewLine & _
+						"|       ID       |      PRICE     |      DATE      |" & vbNewLine & _
+						"|--------------------------------------------------|")
+			
+				DoWhile r < dt.Rows.Count
+					tblRow *Eq "|"
+					doWhile c < 3
+						If isNumeric(dt.Rows(r)(c).ToString()) = *false
+							tblRow *Eq String.Format("{0}{1,17} ", tblRow, Convert.ToDateTime(dt.Rows(r)(c).ToString()).ToString("M/d/yyyy H:mm"))
+						Else
+							tblRow *Eq String.Format("{0}{1,15} |", dt.Rows(r)(c).ToString())
+						EndIf
+						c *Eq c + 1
+					EndDo
+					Console.WriteLine(tblRow)
+					r *Eq r + 1
+				EndDo
+			Else	
+				Console.WriteLine("<<Error: No records to display>>")
+            	leaveSr *false
+			EndIf
+			leaveSr *true
+		EndFunc
+
+		// ///////////////////////////////////////////////////////////////////////////////////////////////
+		BegFunc getRecID Access(*public) Type(Int32)
+			DclSrParm lowrLim Type(Int32)
+			DclSrParm uperLim Type(Int32)
+
+			DclFld RowId Type(Int32)
+			DclFld raw Type(String)
+
+			DoWhile *true
+				Console.WriteLine("Enter the record id: ")
+				raw = Console.ReadLine()
+				If IsNumeric(raw) = *true
+					RowId *Eq Convert.ToInt32(raw)
+					If RowId >= lowrLim And RowId <= uperLim
+						LeaveSr RowId
+					Else
+						Console.WriteLine("<<Error: not a valid input>>")
+					EndIf
+				Else	
+					Console.WriteLine("<<Error: not a valid input>>")
+				EndIF
+			EndDo
+		EndFunc
 		// ///////////////////////////////////////////////////////////////////////////////////////////////
 		BegFunc getSum Access(*public) type(Double)
 			DclSrParm list Type(List(*Of String))
