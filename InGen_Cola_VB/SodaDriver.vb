@@ -820,7 +820,7 @@ Public Class SodaDriver
 
         ' get new earning values
         While True
-            Console.Write("Earnings: ")
+            Console.Write("Spending: ")
             raw = Console.ReadLine()
             If raw <> "*" Then
                 If isNumeric(raw) = True Then
