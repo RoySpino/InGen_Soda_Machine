@@ -285,4 +285,131 @@
            goback.
        end method.
       * ////////////////////////////////////////////////////////////////////////////////////////////////////
+       method-id update_
+       local-storage section.
+           77 cmd              type SqlCommand.
+           77 query            type String.
+           77 colns            type String.
+           77 ValLst           type String.
+           77 ex               type Exception.
+           77 i                pic 9(15).
+           77 valCnt           pic 9(15).
+       linkage section.
+           77 ret              type Boolean.
+           77 tbl              type String.
+           77 col_             type List[type String].
+           77 strin            type List[type String].
+           77 douin            type List[type Double].
+           77 intin            type List[type Int32].
+           77 datin            type List[type DateTime].
+           77 bolin            type List[type Boolean].
+           77 constraint       type String.
+       procedure division using tbl,col_,strin, douin,intin, datin, bolin, constraint returning ret.
+           move "" to ValLst.
+           move "" to colns.
+           move 0 to valCnt.
+           
+           if strin <> null then
+               perform varying i from 0 by 1 until i = strin::Count
+                   if ValLst = "" then
+                       move type String::Format("{0}=?s_{1}",col_[valCnt],i) to ValLst
+                   else
+                       move type String::Format("{0},{1}=?s_{2}",ValLst,col_[valCnt],i) to ValLst
+                   end-if
+                   add 1 to valCnt giving valCnt
+               end-perform
+           end-if.
+           
+           if douin <> null then
+               perform varying i from 0 by 1 until i = douin::Count
+                   if ValLst = "" then
+                       move type String::Format("{0}=?d_{1}",col_[valCnt],i) to ValLst
+                   else
+                       move type String::Format("{0},{1}=?d_{2}",ValLst,col_[valCnt],i) to ValLst
+                   end-if
+                   add 1 to valCnt giving valCnt
+               end-perform
+           end-if.
+           
+           if intin <> null then
+               perform varying i from 0 by 1 until i = intin::Count
+                   if ValLst = "" then
+                       move type String::Format("{0}=?i_{1}",col_[valCnt],i) to ValLst
+                   else
+                       move type String::Format("{0},{1}=?i_{2}",ValLst,col_[valCnt],i) to ValLst
+                   end-if
+                   add 1 to valCnt giving valCnt
+               end-perform
+           end-if.
+           
+           if datin <> null then
+               perform varying i from 0 by 1 until i = datin::Count
+                   if ValLst = "" then
+                       move type String::Format("{0}=?dt_{1}",col_[valCnt],i) to ValLst
+                   else
+                       move type String::Format("{0},{1}=?dt_{2}",ValLst,col_[valCnt],i) to ValLst
+                   end-if
+                   add 1 to valCnt giving valCnt
+               end-perform
+           end-if.
+           
+           if bolin <> null then
+               perform varying i from 0 by 1 until i = bolin::Count
+               if ValLst = "" then
+                       move type String::Format("{0}=?b_{1}",col_[valCnt],i) to ValLst
+                   else
+                       move type String::Format("{0},{1}=?b_{2}",ValLst,col_[valCnt],i) to ValLst
+                   end-if
+                   add 1 to valCnt giving valCnt
+           end-if.
+           
+           move type String::Format("UPDATE {0} SET ({1}) WHERE {2}", tbl, ValLst, constraint) to query.
+           display query.
+           
+           if open_ = true then
+               try
+                   move new SqlCommand() to cmd
+                   move con to cmd::Connection
+                   move query to cmd::CommandText
+                   invoke cmd::Prepare()
+               
+                   if strin = null then
+                       perform varying i from 0 by 1 until i = strin::Count
+                           invoke cmd::Parameters::AddWithValue(type String::Format("?s_{0}", i), strin[i])
+                       end-perform
+                   end-if
+                    if douin = null then
+                       perform varying i from 0 by 1 until i = douin::Count
+                           invoke cmd::Parameters::AddWithValue(type String::Format("?d_{0}", i), douin[i])
+                       end-perform
+                   end-if
+                   if intin = null then
+                       perform varying i from 0 by 1 until i = intin::Count
+                           invoke cmd::Parameters::AddWithValue(type String::Format("?i_{0}", i), intin[i])
+                       end-perform
+                   end-if
+                    if datin = null then
+                       perform varying i from 0 by 1 until i = datin::Count
+                           invoke cmd::Parameters::AddWithValue(type String::Format("?dt_{0}", i), datin[i])
+                       end-perform
+                   end-if
+                   if bolin = null then
+                       perform varying i from 0 by 1 until i = bolin::Count
+                           invoke cmd::Parameters::AddWithValue(type String::Format("?b_{0}", i), bolin[i])
+                       end-perform
+                   end-if
+               
+                   invoke cmd::ExecuteNonQuery()
+                   invoke close_()
+                   move true to ret
+                   goback
+               catch ex
+                   display ex::ToString()
+                   move false to ret
+                   goback
+               end-try
+           end-if.
+           move false to ret.
+           goback.
+       end method.
        end class.
