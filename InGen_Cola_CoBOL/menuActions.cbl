@@ -82,6 +82,57 @@
            move new Type List[type String] to coln.
            goback.
        end method. 
+      */////////////////////////////////////////////////////////////////////////////////////
+       method-id getRecID final public
+       local-storage section.
+           77 ex               type Exception.
+           77 raw              type String.
+       linkage section.
+           01 low              pic 9(15).
+           01 uper             pic 9(15).
+           01 ret              pic 9(15).
+       procedure division using low, uper returning ret.
+           perform getIdLoop
+           until ret is greater than 0.
+       getIdLoop.
+           display "Enter the record id: ".
+           accept raw.
+           
+           if isNumeric(raw) = true
+               move type Convert::ToInt32(raw) to ret
+               if ret >= low and ret <= uper
+                   goback
+               end-if
+           end-if.
+           move -1 to ret.
+       end method.
+      * //////////////////////////////////////////////////////////////////////////////
+       method-id showTop20CashOut final private
+       local-storage section.
+           77 dt               type DataTable.
+           77 r                pic 99.
+       linkage section.
+           01 ret           type Boolean value false.
+       procedure division returning ret.
+           move db::showAsTable("SELECT * FROM CashOut ORDER BY id DESC LIMIT 20;") to dt.
+           if dt::Rows::Count > 0 
+               display " _________________________________________"
+               display "|     ID      |  EARNINGS   |    DATE     |"
+               display "|-----------------------------------------|"
+               
+               perform varying r from 0 by 1 until r = dt::Rows::Count
+                   display type String::Format("|{0,13}{1,14}{2,14}|",
+                       dt::Rows[r][0]::ToString(),
+                       type Convert::ToDouble(dt::Rows[r][0]::ToString()),
+                       type Convert::ToDateTime(dt::Rows[r][0]::ToString())::ToString("M/d/yyyy"))
+               end-perform
+               
+               move true to ret
+           else
+               display "<<Error: No records to display>>"
+           end-if.
+           
+       end method.
       * //////////////////////////////////////////////////////////////////////////////
        method-id showTop20Inventory final private
        local-storage section.
@@ -111,6 +162,33 @@
                goback
            end-if.
            move true to ret.
+       end method.
+      * ////////////////////////////////////////////////////////////////////////////// 
+       method-id showTop20Spending final private
+       local-storage section.
+           77 dt               type DataTable.
+           77 r                pic 99.
+       linkage section.
+           77 ret              type Boolean value false.
+       procedure division returning ret.
+           move db::showAsTable("SELECT * FROM Spendings ORDER BY id DESC LIMIT 20;") to dt.
+           if dt::Rows::Count > 0
+               display " __________________________________________________"
+               display "|       ID       |      PRICE     |      DATE      |"
+               display "|--------------------------------------------------|"
+               
+               perform varying r from 0 by 1 until r = dt::Rows::Count 
+                   display type String::Format("|{0,15}{1,15}{2,17}|",
+                       dt::Rows[r][0]::ToString(),
+                       type Convert::ToDouble(dt::Rows[r][0]::ToString()),
+                       type Convert::ToDateTime(dt::Rows[r][0]::ToString())::ToString("M/d/yyyy"))
+               end-perform
+               
+               move true to ret
+           else
+               display "<<Error: No records to display>>"
+           end-if.
+           goback.
        end method.
       * //////////////////////////////////////////////////////////////////////////////
        method-id listSodas final private.
@@ -493,22 +571,7 @@
       * ///////////////////////////////////////////////////////////////////////////////////////////////////////////
        method-id maintUpinv final public
        local-storage section.
-           77 recUl                pic 9(15).
-           77 recLl                pic 9(15).
-           77 recid                pic 9(15).
-           77 raw                  type String.
-           77 i                    pic 9(15).
-           77 u                    pic 9(15).
-       procedure division.
-           invoke ClearAllLists().
-           invoke coln::Add("ernings").
-           invoke coln::Add("date").
-           
-           goback.
-       end method.
-      * ///////////////////////////////////////////////////////////////////////////////////////////////////////////
-       method-id upinv final public
-       local-storage section.
+           77 dt                   type DataTable.
            77 tblRow               type String value "".
            77 raw                  type String value "".
            77 raw2                 type String value "".
@@ -516,13 +579,14 @@
            77 rowidUl              pic 9(7).
            77 rowlim               pic 9(10).
            77 row_Id               pic 9(10).
-           77 idx                  pic 9(10)
+           77 idx                  pic 9(10).
            77 nworth               pic 9(5)v99.
            77 col1                 type List[type String] value new type List[type String].
            77 col2                 type List[type String] value new type List[type String].
            77 ex                   type Exception.
        procedure division.
            invoke type Console::Clear().
+           invoke ClearAllLists().
            move db::getEl("Inventory", "MIN(id)", "YEAR(date) = YEAR(GetDate()) ORDER BY date DESC LIMIT 20;") to raw.
            move type Convert::ToInt32(raw) to rowidLl.
            move db::getEl("Inventory", "MAX(id)", "YEAR(date) = YEAR(GetDate()) ORDER BY date DESC LIMIT 20;") to raw.
@@ -536,6 +600,8 @@
            if showTop20Inventory = false
                goback
            end-if.
+           invoke getRecID(rowidLl,rowidUL).
+           invoke listSodas().
            display "Enter New Values, use * to keep current values".
            perform varying idx from 0 by 1 until idx >=3
                display col1[idx] & ": "
@@ -587,4 +653,219 @@
                move "*" to raw
            end-if.
        end method.
+      */////////////////////////////////////////////////////////////////////////////////////
+       method-id maintupCashOut final public
+       local-storage section.
+           77 raw                  type String value "".
+           77 rowidLl              pic 9(7).
+           77 rowidUl              pic 9(7).
+           77 pass                 pic 9(10) value 1.
+           77 row_Id               pic 9(10).
+       procedure division.
+           invoke type Console::Clear().
+           if showTop20CashOut() = false
+               goback
+           end-if.
+           invoke ClearAllLists()
+           invoke coln::Add("ernings").
+           invoke coln::Add("date").
+           
+           move db::getEl("CashOut", "MIN(id)", "YEAR(date) = YEAR(NOW()) ORDER BY date DESC LIMIT 20;") to raw.
+           move type Convert::ToInt32(raw) to rowidLl.
+           move db::getEl("CashOut", "MAX(id)", "YEAR(date) = YEAR(NOW()) ORDER BY date DESC LIMIT 20;") to raw.
+           move type Convert::ToInt32(raw) to rowidUl.
+           
+           move  getRecID(rowidLl, rowidUl) to row_ID.
+           display "Enter New Values, use * to keep current values";
+           
+           perform addEarnings
+           until pass = 2.
+           
+           perform addEarnings
+           until pass = 3.
+           
+           if coln::Count > 0 
+               move type String::Format("{0}{1}","id=",row_Id) to raw
+               invoke db::update_("CashOut", coln, strin,douin,intin,datin,bolin,raw)
+           end-if.
+           goback.
+       addEarnings.
+           display "Earnings: " no advancing.
+           accept raw.
+           if raw <> "*"
+               if isNumeric(raw) = true
+                   invoke douin::Add(type Convert::ToDouble(raw))
+                   move 2 to pass
+               end-if
+           else
+               invoke coln::RemoveAt(0)
+               move 2 to pass
+           end-if.
+       addDate.
+           display "Date: " no advancing.
+           accept raw.
+           if raw <> "*"
+               if isNumeric(raw) = true
+                   invoke datin::Add(type Convert::ToDateTime(raw))
+                   move 3 to pass
+               end-if
+           else
+               invoke coln::RemoveAt(1)
+               move 3 to pass
+           end-if.
+       end method.
+      */////////////////////////////////////////////////////////////////////////////////////
+       method-id upSpending final public
+       local-storage section.
+           77 raw                  type String value "".
+           77 rowidLl              pic 9(7).
+           77 rowidUl              pic 9(7).
+           77 pass                 pic 9(10) value 1.
+           77 row_Id               pic 9(10).
+       procedure division.
+           invoke type Console::Clear().
+           if showTop20Spending() = false
+               goback
+           end-if.
+           invoke ClearAllLists().
+           move db::getEl("Spendings", "MIN(id)", "YEAR(date) = YEAR(NOW()) ORDER BY date DESC LIMIT 20;") to raw.
+           move type Convert::ToInt32(raw) to rowidLl.
+           move db::getEl("Spendings", "MAX(id)", "YEAR(date) = YEAR(NOW()) ORDER BY date DESC LIMIT 20;") to raw.
+           move type Convert::ToInt32(raw) to rowidUl.
+
+           invoke coln::Add("price").
+           invoke coln::Add("date").
+
+           move getRecID(rowidLl, rowidUl) to row_ID.
+           
+           perform addSpending
+           until pass =2.
+           
+           perform addDate
+           until pass = 3.
+           
+           if coln::Count > 0 
+               move type String::Format("{0}{1}","id=",row_Id) to raw
+               invoke db::update_("CashOut", coln, strin,douin,intin,datin,bolin,raw)
+           end-if.
+           goback.
+       addSpending.
+           display "Spending: " no advancing.
+           accept raw.
+           if raw <> "*"
+               if isNumeric(raw) = true
+                   invoke douin::Add(type Convert::ToDouble(raw))
+                   move 2 to pass
+               end-if
+           else
+               invoke coln::RemoveAt(0)
+               move 2 to pass
+           end-if.
+       addDate.
+           display "Date: " no advancing.
+           accept raw.
+           if raw <> "*"
+               if isNumeric(raw) = true
+                   invoke datin::Add(type Convert::ToDateTime(raw))
+                   move 3 to pass
+               end-if
+           else
+               invoke coln::RemoveAt(1)
+               move 3 to pass
+           end-if.
+       end method.
+      *///////////////////////////////////////////////////////////////////////////////////// 
+       method-id delInv
+       local-storage section.
+           77 raw                  type String.
+           77 recLl                type Int32.
+           77 recUl                type Int32.
+           77 row_ID               type Int32.
+       procedure division.
+           invoke type Console::Clear()
+           if showTop20Inventory() = false 
+               goback
+           end-if.
+           
+           invoke ClearAllLists().
+           move db::getEl("Inventory", "MIN(id)", "YEAR(date) = YEAR(NOW()) ORDER BY date DESC LIMIT 20;") to raw.
+           move type Convert::ToInt32(raw) to recLl.
+           move db::getEl("Inventory", "MAX(id)", "YEAR(date) = YEAR(NOW()) ORDER BY date DESC LIMIT 20;") to raw.
+           move type Convert::ToInt32(raw) to recUl.
+           
+           move getRecID(recLl, recUl) to row_ID.
+           
+           display type String::Format("Are you sure you want to delete record: {0} (y/n): ", row_ID) no advancing.
+           accept raw.
+           move raw::ToLower to raw.
+           
+           if raw = "y"
+               move type String::Format("DELETE FROM Inventory WHERE id={0}", row_ID) to raw
+               invoke db::runQuery(raw)
+           end-if.
+           
+           goback.
+       end method.
+      *///////////////////////////////////////////////////////////////////////////////////// 
+       method-id delCashOut
+       local-storage section.
+           77 raw                  type String.
+           77 recLl                type Int32.
+           77 recUl                type Int32.
+           77 row_ID               type Int32.
+       procedure division.
+           invoke type Console::Clear()
+           if showTop20Inventory() = false 
+               goback
+           end-if.
+           
+           move db::getEl("CashOut", "MIN(id)", "YEAR(date) = YEAR(NOW()) ORDER BY date DESC LIMIT 20;") to raw.
+           move type Convert::ToInt32(raw) to recLl.
+           move db::getEl("CashOut", "MAX(id)", "YEAR(date) = YEAR(NOW()) ORDER BY date DESC LIMIT 20;") to raw.
+           move type Convert::ToInt32(raw) to recUl.
+           
+           move getRecID(recLl, recUl) to row_ID.
+           
+           display type String::Format("Are you sure you want to delete record: {0} (y/n): ", row_ID) no advancing.
+           accept raw.
+           move raw::ToLower to raw.
+           
+           if raw = "y"
+               move type String::Format("DELETE FROM CashOut WHERE id={0}", row_ID) to raw
+               invoke db::runQuery(raw)
+           end-if.
+           
+           goback.
+       end method.
+      *///////////////////////////////////////////////////////////////////////////////////// 
+       method-id delSpending
+       local-storage section.
+           77 raw                  type String.
+           77 recLl                type Int32.
+           77 recUl                type Int32.
+           77 row_ID               type Int32.
+       procedure division.
+           invoke type Console::Clear()
+           if showTop20Inventory() = false 
+               goback
+           end-if.
+           
+           move db::getEl("Spendings", "MIN(id)", "YEAR(date) = YEAR(NOW()) ORDER BY date DESC LIMIT 20;") to raw.
+           move type Convert::ToInt32(raw) to recLl.
+           move db::getEl("Spendings", "MAX(id)", "YEAR(date) = YEAR(NOW()) ORDER BY date DESC LIMIT 20;") to raw.
+           move type Convert::ToInt32(raw) to recUl.
+           
+           move getRecID(recLl, recUl) to row_ID.
+           
+           display type String::Format("Are you sure you want to delete record: {0} (y/n): ", row_ID) no advancing.
+           accept raw.
+           move raw::ToLower to raw.
+           
+           if raw = "y"
+               move type String::Format("DELETE FROM Spendings WHERE id={0}", row_ID) to raw
+               invoke db::runQuery(raw)
+           end-if.
+           
+           goback.
+       end method.  
        end class.
