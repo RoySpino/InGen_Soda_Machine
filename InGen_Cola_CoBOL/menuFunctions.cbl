@@ -167,14 +167,22 @@
                invoke mact::maintAddSoda()
            else
                if sel = "upinv" then
-           else
-               if sel = "upcsh" then
+                   invoke mact::maintUpinv()
                else
-                   if sel = "upspn" then
+                   if sel = "upcsh" then
+                       invoke mact::maintupCashOut()
                    else
-                       if sel = "delinv" then
+                       if sel = "upspn" then
+                           invoke mact::upSpending()
                        else
-                           if sel = "delcsh" then
+                           if sel = "delinv" then
+                               invoke mact::delInv()
+                           else
+                               if sel = "delcsh" then
+                                   invoke mact::delCashOut()
+                               else
+                                   if sel = "delspn"
+                                       invoke mact::delSpending()
            end-if.
            move true to doSubLoop.
        end method.  
