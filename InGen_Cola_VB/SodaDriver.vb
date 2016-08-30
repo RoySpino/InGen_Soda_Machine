@@ -119,7 +119,7 @@ Public Class SodaDriver
                       "|----------------------------------------------|" & vbNewline & _
                       "| add             Add this years profets       |" & vbNewline & _
                       "| adds            Add this years spendings     |" & vbNewline & _
-                      "| avgg            Get avg. gross for the year  |" & vbNewline & _
+                      "| avgg            Get avg. grose for the year  |" & vbNewline & _
                       "| avgn            Get avg. net for this year   |" & vbNewline & _
                       "| avgs            Get avg. spendings           |" & vbNewline & _
                       "| net             Calculate profets per-can    |" & vbNewline & _
@@ -233,7 +233,7 @@ Public Class SodaDriver
         ern = getAvrage(earning)
 
         Console.WriteLine(vbTab & " _________________________________" & vbNewLine & _
-                  vbTab & "/ Average Gross: " & ern.ToString("C"))
+                  vbTab & "/ Average Grose: " & ern.ToString("C"))
     End Sub
     '=======================================================================================================================
     Sub statAvgn()
@@ -315,7 +315,7 @@ Public Class SodaDriver
         ern = getSum(earning)
 
         Console.WriteLine(vbTab & " _________________________________" & vbNewLine & _
-                  vbTab & "/ Total Gross: " & (ern.ToString("C")))
+                  vbTab & "/ Total Grose: " & (ern.ToString("C")))
     End Sub
     '=======================================================================================================================
     Sub statAddSpend()
@@ -328,7 +328,7 @@ Public Class SodaDriver
         spn = getSum(spending)
 
         Console.WriteLine(vbTab & " _________________________________" & vbNewLine & _
-                  vbTab & "/ Total Spendings: " & (spn.ToString("C")))
+                  vbTab & "/ Total Grose: " & (spn.ToString("C")))
     End Sub
     '=======================================================================================================================
     Sub statWeek()
@@ -560,34 +560,107 @@ Public Class SodaDriver
     '=======================================================================================================================
     Sub curCashout()
         Dim table As DataTable
+        Dim recCnt,YearFrom, YearTo As Integer
+        Dim sel As String
+        Dim tot As Integer
+        Dim mult As Double
 
+        YearTo = -1
         Console.Clear()
+        Console.Write("Enter the year to search from: ")
+        sel = Console.ReadLine()
+        If IsNumeric(sel) = true Then
+            YearFrom = Convert.ToInt32(sel)
+            If YearFrom = Convert.ToDouble(DateTime.Now.ToString("yyyy")) then
+                YearTo = YearFrom
+            End If
+        Else
+            Console.WriteLine("<ERROR: Invalid Input " & sel & " is not a year>")
+        End If
+        
+        If YearTo <= 0 then
+            Console.Write("Enter the year to search to:   ")
+            sel = Console.ReadLine()
+            If IsNumeric(sel) = true Then
+                YearTo = Convert.ToInt32(sel)
+            Else
+                Console.WriteLine("<ERROR: Invalid Input " & sel & " is not a year>")
+            End If
+        End If
 
-        Console.WriteLine("{0,13}{1,13}", "Earnings", "Date")
+        mult = YearTo - YearFrom
+        if mult = 0 then
+            mult = 1
+        End If
+
+        Console.WriteLine(vbNewLine & "{0,13}{1,13}", "Earnings", "Date")
         Console.WriteLine("-----------------------------")
-        table = db.showAsTable("SELECT Ernings, date FROM CashOut WHERE YEAR(date) = YEAR(NOW());")
+        table = db.showAsTable("SELECT Ernings, date FROM CashOut WHERE YEAR(date) >= " & YearFrom & " AND YEAR(DATE) <= " & YearTo & ";")
 
         For r As Integer = 0 To table.Rows.Count - 1
+            recCnt = (r + 1)
             Console.Write(String.Format("{0,13}",Convert.ToDouble(table.Rows(r)(0).ToString()).ToString("C")))
-	    Console.WriteLine(String.Format("{0,13}",Convert.ToDateTime(table.Rows(r)(1).ToString()).ToString("M/d/yyyy")))
+	       Console.WriteLine(String.Format("{0,13}",Convert.ToDateTime(table.Rows(r)(1).ToString()).ToString("M/d/yyyy")))
         Next
+
+        tot = Convert.ToDouble(db.getEl("CashOut","SUM(Ernings)", "YEAR(date) >= " & YearFrom & " AND YEAR(DATE) <= " & YearTo & ";"))
+        Console.WriteLine(vbNewLine & "        Total: " & tot.ToString("c"))
+        Console.WriteLine(" Record Count: " & recCnt)
+        Console.WriteLine("    Avg./moth: " & (tot / (12.0 * mult)).ToString("c"))
         Console.WriteLine("")
     End Sub
 
     '=======================================================================================================================
     Sub curSpendings()
         Dim table As DataTable
+        Dim recCnt, YearFrom, YearTo As Integer
+        Dim mult As Double
+        Dim sel As String
+        Dim tot As Integer
 
+        YearTo = -1
         Console.Clear()
-        Console.WriteLine("{0,13}{1,13}", "Spendings", "Date")
+        Console.Write("Enter the year to search from: ")
+        sel = Console.ReadLine()
+        If IsNumeric(sel) = true Then
+            YearFrom = Convert.ToInt32(sel)
+            If YearFrom = Convert.ToDouble(DateTime.Now.ToString("yyyy")) then
+                YearTo = YearFrom
+            End If
+        Else
+            Console.WriteLine("<ERROR: Invalid Input " & sel & " is not a year>")
+        End If
+        
+        If yearTo <= 0 Then
+            Console.Write("Enter the year to search to:   ")
+            sel = Console.ReadLine()
+            If IsNumeric(sel) = true Then
+                YearTo = Convert.ToInt32(sel)
+            Else
+                Console.WriteLine("<ERROR: Invalid Input " & sel & " is not a year>")
+            End If
+        End If
+
+        mult = yearTo - yearFrom
+        if mult = 0 then
+            mult = 1
+        End If
+
+        Console.WriteLine(vbNewLine & "{0,13}{1,13}", "Spendings", "Date")
         Console.WriteLine("-----------------------------")
-        table = db.showAsTable("SELECT price, date FROM Spendings WHERE YEAR(date) = YEAR(NOW());")
+        table = db.showAsTable("SELECT price, date FROM Spendings WHERE YEAR(date) >= " & YearFrom & " AND YEAR(date) <= " & YearTo & ";")
 
         For r As Integer = 0 To table.Rows.Count - 1
+            recCnt = (r + 1)
             Console.WriteLine("{0,13}{1,13}", _
                             Convert.ToDouble(table.Rows(r)(0).ToString()).Tostring("C"), _
                             Convert.ToDateTime(table.Rows(r)(1).ToString()).ToString("M/d/yyyy"))
         Next
+        tot = Convert.ToDouble(db.getEl("Spendings","SUM(price)", "YEAR(date) >= " & YearFrom & " AND YEAR(DATE) <= " & YearTo & ";"))
+        Console.WriteLine(vbNewLine & "        Total: " & tot.ToString("c"))
+        Console.WriteLine(" Record Count: " & recCnt)
+        Console.WriteLine("    Avg./moth: " & (tot / 12.0).toString("c"))
+        Console.WriteLine("")
         Console.WriteLine("")
     End Sub
 
@@ -820,7 +893,7 @@ Public Class SodaDriver
 
         ' get new earning values
         While True
-            Console.Write("Spending: ")
+            Console.Write("Earnings: ")
             raw = Console.ReadLine()
             If raw <> "*" Then
                 If isNumeric(raw) = True Then
