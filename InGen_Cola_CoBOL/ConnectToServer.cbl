@@ -287,7 +287,7 @@
       * ////////////////////////////////////////////////////////////////////////////////////////////////////
        method-id update_
        local-storage section.
-           77 cmd              type SqlCommand.
+           77 cmd              type MySqlCommand.
            77 query            type String.
            77 colns            type String.
            77 ValLst           type String.
@@ -368,7 +368,7 @@
            
            if open_ = true then
                try
-                   move new SqlCommand() to cmd
+                   move new MySqlCommand() to cmd
                    move con to cmd::Connection
                    move query to cmd::CommandText
                    invoke cmd::Prepare()
