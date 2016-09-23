@@ -228,7 +228,7 @@
            
            if strin::Count >0
                move strin::Count to lim
-               move "?s_{0}" to vallst
+               move "?s_0" to vallst
                perform varying indx from 1 by 1 until indx >= lim
                    move type String::Format("{0},?s_{1}",vallst, indx) to vallst
                end-perform
