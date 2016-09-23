@@ -101,9 +101,9 @@
                    goback
                catch ex
                    display "ConnectToServer, On Count where query= " query
-                   move 0 to ret
                end-try
            end-if.
+           move 0 to ret
            goback.
        readLoop.
            move red[0]::ToString() to tmp.
