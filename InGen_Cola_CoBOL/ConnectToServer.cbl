@@ -317,6 +317,7 @@
                catch ex
                    display "ConnectToServer, on insert() where query= " query ex::Message
                    move false to ret
+                   invoke close_()
                end-try
            end-if.
            
