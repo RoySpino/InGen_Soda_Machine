@@ -72,6 +72,43 @@
            goback.
        end method.
       * ////////////////////////////////////////////////////////////////////////////////////////////////////
+       method-id count_ final public.
+       local-storage section.
+           77 ex            type Exception.
+           77 cmd           type MySql.Data.MySqlClient.MySqlCommand.
+           77 red           type MySql.Data.MySqlClient.MySqlDataReader.
+           77 tmp           type String.
+           77 query         type String.
+       linkage section.
+           01 tbl           type String.
+           01 col_          type String.
+           01 cons          type String.
+           01 ret           type Int32.
+       procedure division using tbl, col_, cons returning ret.
+           move type String::Format("SELECT COUNT({1}) FROM {0} WHERE {2}", tbl, col_, cons) to query.
+       
+           if open_() = true
+               try
+                   move type MySql.Data.MySqlClient.MySqlCommand::new(query,con) to cmd
+                   move cmd::ExecuteReader() to red
+                   
+                   perform readLoop
+                   until red::Read() = false
+                   invoke red::Close()
+                   
+                   move type Convert::ToInt32(tmp) to ret
+                   invoke close_()
+                   goback
+               catch ex
+                   display "ConnectToServer, On Count where query= " query
+                   move 0 to ret
+               end-try
+           end-if.
+           goback.
+       readLoop.
+           move red[0]::ToString() to tmp.
+       end method. 
+      * ////////////////////////////////////////////////////////////////////////////////////////////////////
        method-id getEl final public.
        local-storage section.
            77 ex            type Exception.
