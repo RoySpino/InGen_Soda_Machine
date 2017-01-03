@@ -1,4 +1,4 @@
-# InGen_Soda_Machine
+# InGen Soda Machine
 A console program used as a database front end to manage the inventory and profits of a soda vending machine.
 
 This, like Viper Science, is used both practically and as a learning aid. This program was originally written 
