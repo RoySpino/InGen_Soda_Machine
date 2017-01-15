@@ -4,7 +4,7 @@ A console program used as a database front end to manage the inventory and profi
 This, like Viper Science, is used both practically and as a learning aid. This program was originally written 
 in C++ using three files. But when I needed to learn how to use SQL I redesigned it to be a database front end.
 
-## Current tralsations
+## Current translations 
 Visual Basic:
 
 Visual RPG:
