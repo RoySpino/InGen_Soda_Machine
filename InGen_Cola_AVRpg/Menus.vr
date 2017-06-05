@@ -1,9 +1,9 @@
-﻿Using System
+Using System
 Using System.Text
 Using System.Collections.Generic
 Using System.Data
 
-DclNamespace SodaAVR
+DclNamespace Soda
 
 BegClass Menus Access(*Public)
 		DclFld db type(ConnectToServer)
@@ -14,35 +14,37 @@ BegClass Menus Access(*Public)
 
 		BegFunc MainMenu Access(*Public) Type(*Packed) Len(2,0)
 			DclFld sel Type(String)
+			
+			dowhile *true
+				Console.Clear()
+				Console.WriteLine(" ______________________________________________")
+				Console.WriteLine( "| InGen Cola                                   |")
+				Console.WriteLine( "|----------------------------------------------|")
+				Console.WriteLine( "| Current         Show Previous entries        |")
+				Console.WriteLine( "| New             Make new Entry               |")
+				Console.WriteLine( "| Stats           Soda Statistics              |")
+				Console.WriteLine( "| Maint           Database Maintanince         |")
+				Console.WriteLine( "| EXIT            Quit Program                 |")
+				Console.WriteLine( "|______________________________________________|")
+				Console.Write( ">>> ")
+				sel = Console.ReadLine()
 
-			Console.Clear()
-			Console.WriteLine(" ______________________________________________")
-			Console.WriteLine( "| InGen Cola                                   |")
-			Console.WriteLine( "|----------------------------------------------|")
-			Console.WriteLine( "| Current         Show Previous entries        |")
-			Console.WriteLine( "| New             Make new Entry               |")
-			Console.WriteLine( "| Stats           Soda Statistics              |")
-			Console.WriteLine( "| Maint           Database Maintanince         |")
-			Console.WriteLine( "| EXIT            Quit Program                 |")
-			Console.WriteLine( "|______________________________________________|")
-			Console.Write( ">>> ")
-			sel *Eq Console.ReadLine()
+				sel = sel.ToLower()
 
-			sel = sel.ToLower()
-
-			Select
-				when sel = "current"
-					currentMenu()
-				when sel = "new"
-					NewMenu()
-				when sel = "stats"
-					statsMenu()
-				when sel = "maint"
-					MaintenanceMenu()
-				when sel = "exit"
-					LeaveSr 0
-			EndSl
-			LeaveSr 1
+				Select
+					when sel = "current"
+						currentMenu()
+					when sel = "new"
+						NewMenu()
+					when sel = "stats"
+						statsMenu()
+					when sel = "maint"
+						MaintenanceMenu()
+					when sel = "exit"
+						LeaveSr 0
+				EndSl
+			enddo
+			leavesr 0
 		EndFunc
 
 		// ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -60,7 +62,7 @@ BegClass Menus Access(*Public)
 				Console.WriteLine( "| CD              Back to Main Menu            |")
 				Console.WriteLine( "|______________________________________________|")
 				Console.Write( ">>> ")
-				sel *Eq Console.ReadLine()
+				sel = Console.ReadLine()
 
 				sel = sel.ToLower()
 
@@ -97,7 +99,7 @@ BegClass Menus Access(*Public)
 			    Console.WriteLine( "| CD              Back to Main Menu            |")
 			    Console.WriteLine( "|______________________________________________|")
 				Console.Write( ">>> ")
-				sel *Eq Console.ReadLine()
+				sel = Console.ReadLine()
 
 				sel = sel.ToLower()
 
@@ -138,7 +140,7 @@ BegClass Menus Access(*Public)
 				Console.WriteLine("| CD              Back to Main Menu            |")
 				Console.WriteLine("|______________________________________________|")
 				Console.Write( ">>> ")
-				sel *Eq Console.ReadLine()
+				sel = Console.ReadLine()
 
 				sel = sel.ToLower()
 
@@ -175,7 +177,7 @@ BegClass Menus Access(*Public)
 				Console.WriteLine("| CD              Back to Main Menu            |")
 				Console.WriteLine("|______________________________________________|")
 				Console.Write( ">>> ")
-				sel *Eq Console.ReadLine()
+				sel = Console.ReadLine()
 
 				sel = sel.ToLower()
 
@@ -226,7 +228,7 @@ BegClass Menus Access(*Public)
 
 			DoWhile r < tmp.Rows.Count
 				Console.WriteLine(String.Format("|{0,7} {1,15}|", tmp.Rows(r)(0).ToString(), tmp.Rows(r)(1).ToString()))
-				r *Eq r + 1
+				r = r + 1
 			EndDo
 			
 			Console.WriteLine("|_______________________|")
@@ -239,16 +241,16 @@ BegClass Menus Access(*Public)
 			DclFld col Type(List(*Of string))
 			DclFld sel Type(String)
 
-			col *Eq *new List(*Of String)()
-			datin *Eq *new List(*Of DateTime)()
-			douin *Eq *new List(*Of Double)()
+			col = *new List(*Of String)()
+			datin = *new List(*Of DateTime)()
+			douin = *new List(*Of Double)()
 
 			Console.Clear()
 			Console.WriteLine(" ______________________________________________")
             Console.WriteLine ("| InGen Cola                 New Records       |")
             Console.WriteLine ("|----------------------------------------------|")
             Console.Write ("| Enter the total amount collected: ")
-		    sel *Eq Console.ReadLine()
+		    sel = Console.ReadLine()
 
 			if sel = "q" or sel = "back"
 				leavesr
@@ -280,10 +282,10 @@ BegClass Menus Access(*Public)
 			DclFld lim Type(*packed) Len(10,0) inz(0)
 			DclFld i Type(*packed) Len(10,0) inz(0)
 
-			col *Eq *new List(*Of String)()
-			datin *Eq *new List(*Of DateTime)()
-			douin *Eq *new List(*Of Double)()
-			intin *eq *new List(*Of Int32)()
+			col = *new List(*Of String)()
+			datin = *new List(*Of DateTime)()
+			douin = *new List(*Of Double)()
+			intin = *new List(*Of Int32)()
 
 
 			Console.Clear()
@@ -291,14 +293,14 @@ BegClass Menus Access(*Public)
             Console.WriteLine ("| InGen Cola                 New Records       |")
             Console.WriteLine ("|----------------------------------------------|")
             Console.Write ("| Enter the number of cans purchased: ")
-		    sel *Eq Console.ReadLine()
+		    sel = Console.ReadLine()
 			
 			if sel = "q" or sel = "back"
 				leavesr
 			endif
 
 			if IsNumeric(sel) = *true
-				lim *Eq Convert.ToDouble(sel)
+				lim = Convert.ToDouble(sel)
 			EndIf
 
 			DisplaySoda()
@@ -355,7 +357,7 @@ BegClass Menus Access(*Public)
 				douin.Clear()
 				intin.Clear()
 				datin.Clear()
-				i *Eq i +1
+				i = i +1
 			EndDo
 			
 		EndSr
@@ -403,11 +405,15 @@ BegClass Menus Access(*Public)
 			tmp = db.showAsList("SELECT ernings FROM cashout;")
 			tmp2 = db.showAsList("SELECT price FROM spendings;")
 
-			earnings *Eq getSum(tmp)
-			spending *Eq getSum(tmp2)
+			earnings = getSum(tmp)
+			spending = getSum(tmp2)
 
-			units *Eq (tmp2.Count + tmp.Count) / 2
-			earnings = (earnings - spending) / units
+			units = (tmp2.Count + tmp.Count) / 2
+			if units <> 0
+				earnings = (earnings - spending) / units
+			else
+				earnings = 0
+			endif
 			
 			Console.WriteLine("  _______________________________________")
 			Console.WriteLine(" / Avrage Net Earnings: " + earnings)
@@ -421,7 +427,7 @@ BegClass Menus Access(*Public)
 			Console.Clear()
 			tmp = db.showAsList("SELECT price FROM spendings;")
 
-			earnings *Eq getAvrage(tmp)
+			earnings = getAvrage(tmp)
 			
 			Console.WriteLine("  _______________________________________")
 			Console.WriteLine(" / Avrage weekley Spendings: " + earnings)
@@ -439,8 +445,8 @@ BegClass Menus Access(*Public)
 			tmp = db.showAsList("SELECT ernings FROM cashout;")
 			tmp2 = db.showAsList("SELECT price FROM spendings;")
 
-			earnings *Eq getSum(tmp)
-			spending *Eq getSum(tmp2)
+			earnings = getSum(tmp)
+			spending = getSum(tmp2)
 
 			earnings = (earnings - spending) 
 			
@@ -465,7 +471,7 @@ BegClass Menus Access(*Public)
 				EndIF
 
 				Console.WriteLine(String.Format("|{0,10} {1,15}|",tmp.Rows[i][0].ToString(), Convert.ToDateTime(tmp.Rows[i][1].ToString()).ToString("M/d/yyyy")))
-				i *eq i+1
+				i = i+1
 			EndDo
 		EndSr
 		
@@ -491,24 +497,24 @@ BegClass Menus Access(*Public)
 				    Console.WriteLine( "-------------------------------------------------------------------------------------------")
 				EndIF
 
-				sname *Eq tmp.Rows[i][0].ToString()
-				cost *Eq Convert.ToDouble(tmp.Rows[i][1].ToString()).ToString("C")
-				numCans *Eq Convert.ToDouble(tmp.Rows[i][2].ToString()).ToString("N0")
-				ppcan *Eq Convert.ToDouble(tmp.Rows[i][3].ToString()).ToString("C")
-				sales *Eq Convert.ToDouble(tmp.Rows[i][4].ToString()).ToString("C")
-				netpr *Eq Convert.ToDouble(tmp.Rows[i][5].ToString()).ToString("C")
+				sname = tmp.Rows[i][0].ToString()
+				cost = Convert.ToDouble(tmp.Rows[i][1].ToString()).ToString("C")
+				numCans = Convert.ToDouble(tmp.Rows[i][2].ToString()).ToString("N0")
+				ppcan = Convert.ToDouble(tmp.Rows[i][3].ToString()).ToString("C")
+				sales = Convert.ToDouble(tmp.Rows[i][4].ToString()).ToString("C")
+				netpr = Convert.ToDouble(tmp.Rows[i][5].ToString()).ToString("C")
 				
 				Console.WriteLine(String.Format("{0,14}{1,15}{2,15}{3,16}{4,16}{5,16}", sname, cost, numCans, ppcan, sales, netpr))
-				i *eq i+1
+				i = i+1
 			EndDo
 		EndSr
 		
 		// ///////////////////////////////////////////////////////////////////////////////////////////////
 		BegSr StatStdDiv Access(*protected)
-			DclFld spending Type(*Of String)
-			DclFld earnings Type(*Of String)
-			DclFld Vspn Type(*Of String)
-			DclFld Vern Type(*Of String)
+			DclFld spending Type(List(*Of *String))
+			DclFld earnings Type(List(*Of *String))
+			DclFld Vspn Type(List(*Of *String))
+			DclFld Vern Type(List(*Of *String))
 			DclFld dt1 Type(DataTable)
 			DclFld dt2 Type(DataTable)
 			DclFld spn Type(Double)
@@ -516,17 +522,17 @@ BegClass Menus Access(*Public)
 			DclFld Aspn Type(Double)
 			DclFld Aern Type(Double)
 
-			spending *Eq db.showAsList("SELECT price FROM spendings WHERE YEAR(NOW()) = YEAR(date);")
-			earnings *Eq db.showAsList("SELECT ernings FROM cashout WHERE YEAR(NOW()) = YEAR(date);")
+			spending = db.showAsList("SELECT price FROM spendings WHERE YEAR(NOW()) = YEAR(date);")
+			earnings = db.showAsList("SELECT ernings FROM cashout WHERE YEAR(NOW()) = YEAR(date);")
 
-			Aspn = getAvrage(spndings)
+			Aspn = getAvrage(spending)
 			Aern = getAvrage(earnings)
 
 			Vspn = db.showAsList("SELECT (price * price) - " + Aspn + " FROM spendings WHERE YEAR(NOW()) = YEAR(date);")
-			Vern *Eq db.showAsList("SELECT (ernings * ernings) - " + Aern + " FROM cashout WHERE YEAR(NOW()) = YEAR(date);")
+			Vern = db.showAsList("SELECT (ernings * ernings) - " + Aern + " FROM cashout WHERE YEAR(NOW()) = YEAR(date);")
 
-			spn *Eq System.Math.Sqrt(getAvrage(Vspn))
-			ern *Eq System.Math.Sqrt(getAvrage(Vern))
+			spn = System.Math.Sqrt(getAvrage(Vspn))
+			ern = System.Math.Sqrt(getAvrage(Vern))
 
 			dt1 = db.showAsTable("select date, price, ((price - " + Aspn + ") / " + spn + ") AS stddiv FROM spendings WHERE YEAR(NOW()) = YEAR(date);")
 			dt2 = db.showAsTable("select ernings, ernings, ((ernings - " + Aern + ") / " + ern + ") AS stddiv FROM cashout WHERE YEAR(NOW()) = YEAR(date);")
@@ -561,8 +567,8 @@ BegClass Menus Access(*Public)
 
 				Console.WriteLine(String.Format("|{0,10} {1,15}|",tmp.Rows[i][0].ToString(), Convert.ToDateTime(tmp.Rows[i][1].ToString()).ToString("M/d/yyyy")))
 
-				sum *Eq sum + Convert.ToDouble(tmp.Rows[i][0].ToString())
-				i *eq i+1
+				sum = sum + Convert.ToDouble(tmp.Rows[i][0].ToString())
+				i = i+1
 			EndDo
 
 			Console.WriteLine("")
@@ -597,8 +603,8 @@ BegClass Menus Access(*Public)
 
 				Console.WriteLine(String.Format("|{0,10} {1,15}|",tmp.Rows[i][0].ToString(), Convert.ToDateTime(tmp.Rows[i][1].ToString()).ToString("M/d/yyyy")))
 
-				sum *Eq sum + Convert.ToDouble(tmp.Rows[i][0].ToString())
-				i *eq i+1
+				sum = sum + Convert.ToDouble(tmp.Rows[i][0].ToString())
+				i = i+1
 			EndDo
 
 			Console.WriteLine("")
@@ -634,8 +640,8 @@ BegClass Menus Access(*Public)
 				Console.WriteLine(String.Format("|{0,10} {1,15},{2,10} {3,15},{4,10} {5,15},{6,10} |", tmp.Rows[i][0].ToString(), tmp.Rows[i][1].ToString()), tmp.Rows[i][2].ToString(), tmp.Rows[i][3].ToString(), tmp.Rows[i][4].ToString(), tmp.Rows[i][5].ToString(), tmp.Rows[i][6].ToString())
 				
 
-				sum *Eq sum + Convert.ToDouble(tmp.Rows[i][0].ToString())
-				i *eq i+1
+				sum = sum + Convert.ToDouble(tmp.Rows[i][0].ToString())
+				i = i+1
 			EndDo
 
 			Console.WriteLine("")
@@ -667,121 +673,127 @@ BegClass Menus Access(*Public)
 			Console.WriteLine("______________________________________________________________________")
 			DoWhile i < tbl.Rows.Count
 				Console.WriteLine(String.Format("{0,5} {1,10} {2,9} {3,7} {4,7} {5,7} {6,7} {7,10}",tbl.Rows[i][0],tbl.Rows[i][1],tbl.Rows[i][2],Convert.ToDouble(tbl.Rows[i][3]).ToString("c"),Convert.ToDouble(tbl.Rows[i][4]).ToString("c"),Convert.ToDouble(tbl.Rows[i][5]).ToString("c"),Convert.ToDouble(tbl.Rows[i][6]).ToString("c"),Convert.ToDateTime(tbl.Rows[i][7]).ToString("M/d/yyyy")))
-				i *Eq i + 1
+				i = i + 1
 			EndDo
 
-			uperLim *Eq %int(tbl.Rows[0][0].ToString())
-			lowrLim *Eq %int(tbl.Rows[tbl.Rows.Count -1][0].ToString())
+			if tbl.Rows.Count <> 0
+				uperLim = %int(tbl.Rows[0][0].ToString())
+				lowrLim = %int(tbl.Rows[tbl.Rows.Count -1][0].ToString())
 
-			Do
-				// prompt user for recored number
-				Console.WriteLine(" _________________________________")
-				Console.WriteLine("/ Enter recID to update: ")
-				sel = Console.ReadLine()
+				Do
+					// prompt user for recored number
+					Console.WriteLine(" _________________________________")
+					Console.WriteLine("/ Enter recID to update: ")
+					sel = Console.ReadLine()
 			
-				If *this.IsNumeric(sel)
-					selID *Eq %int(sel)
-				Else
-					selID = -1
-				EndIf
-
-				If selID >= lowrLim And selID <= uperLim
-					IF db.getEl("inventory", "id", "id=" + selID) <> ""
-						leave
+					If *this.IsNumeric(sel)
+						selID = %int(sel)
 					Else
-						Console.WriteLine("<<Error: Invalid Index >>")
+						selID = -1
 					EndIf
-				EndIf
-			End
 
-			i *Eq 0
-			col *Eq *new List(*Of String)()
-			intin *Eq *new List(*Of Int32)()
-			Datin *Eq *new List(*Of DateTime)()
-			*this.DisplaySoda()
-			Console.WriteLine("Enter New Information use * to keep value")
-			// get information to update
-			Do
-				If NewVal <> "*"
+					If selID >= lowrLim And selID <= uperLim
+						IF db.getEl("inventory", "id", "id=" + selID) <> ""
+							leave
+						Else
+							Console.WriteLine("<<Error: Invalid Index >>")
+						EndIf
+					EndIf
+				EndDo
+
+				i = 0
+				col = *new List(*Of String)()
+				intin = *new List(*Of Int32)()
+				Datin = *new List(*Of DateTime)()
+				*this.DisplaySoda()
+				Console.WriteLine("Enter New Information use * to keep value")
+				// get information to update
+				Do
+					If NewVal <> "*"
 					
-					Select
-						when i = 0
-							col.Add("SodaID")
-							If *this.IsNumeric(NewVal)
-								intin.Add( %int(NewVal))
-							Else
-								intin.Add(0)
-							EndIf
-						when i = 1
-							col.Add("cancount")
-							If *this.IsNumeric(NewVal)
-								intin.Add( %int(NewVal))
-							Else
-								intin.Add(0)
-							EndIf
-						when i = 2
-							col.Add("price")
-							If *this.IsNumeric(NewVal)
-								douin.Add( Convert.ToDouble(NewVal))
-							Else
-								douin.Add(0)
-							EndIf
-						when i = 3
-							col.Add("crv")
-							If *this.IsNumeric(NewVal)
-								douin.Add( Convert.ToDouble(NewVal))
-							Else
-								douin.Add(0)
-							EndIf
-						when i = 4
-							col.Add("worth")
-							If *this.IsNumeric(NewVal)
-								douin.Add( Convert.ToDouble(NewVal))
-							Else
-								douin.Add(0)
-							EndIf
-						when i = 4
-							col.Add("net")
-							If *this.IsNumeric(NewVal)
-								douin.Add( Convert.ToDouble(NewVal))
-							Else
-								douin.Add(0)
-							EndIf
-						when i= 5
-							col.Add("datin")
-							try 
-								datin.Add(Convert.ToDateTime( NewVal))
-							catch ex System.Exception
-								datin.Add(DateTime.Now)
-							EndTry
-					EndSl
-				EndIf
-				if intin.Count = 0
-					intin *Eq *Nothing
-				EndIf
-				if douin.Count = 0
-					douin *Eq *Nothing
-				EndIf
-				if datin.Count = 0
-					datin *Eq *Nothing
-				EndIf
-				db.update("inventory", col, *Nothing,douin,intin,*Nothing,datin,"id="+selID)
-				i *Eq i + 1
-			End
+						Select
+							when i = 0
+								col.Add("SodaID")
+								If *this.IsNumeric(NewVal)
+									intin.Add( %int(NewVal))
+								Else
+									intin.Add(0)
+								EndIf
+							when i = 1
+								col.Add("cancount")
+								If *this.IsNumeric(NewVal)
+									intin.Add( %int(NewVal))
+								Else
+									intin.Add(0)
+								EndIf
+							when i = 2
+								col.Add("price")
+								If *this.IsNumeric(NewVal)
+									douin.Add( Convert.ToDouble(NewVal))
+								Else
+									douin.Add(0)
+								EndIf
+							when i = 3
+								col.Add("crv")
+								If *this.IsNumeric(NewVal)
+									douin.Add( Convert.ToDouble(NewVal))
+								Else
+									douin.Add(0)
+								EndIf
+							when i = 4
+								col.Add("worth")
+								If *this.IsNumeric(NewVal)
+									douin.Add( Convert.ToDouble(NewVal))
+								Else
+									douin.Add(0)
+								EndIf
+							when i = 4
+								col.Add("net")
+								If *this.IsNumeric(NewVal)
+									douin.Add( Convert.ToDouble(NewVal))
+								Else
+									douin.Add(0)
+								EndIf
+							when i= 5
+								col.Add("datin")
+								try 
+									datin.Add(Convert.ToDateTime( NewVal))
+								catch ex System.Exception
+									datin.Add(DateTime.Now)
+								EndTry
+						EndSl
+					EndIf
+					if intin.Count = 0
+						intin = *Nothing
+					EndIf
+					if douin.Count = 0
+						douin = *Nothing
+					EndIf
+					if datin.Count = 0
+						datin = *Nothing
+					EndIf
+					db.update("inventory", col, *Nothing,douin,intin,*Nothing,datin,"id="+selID)
+					i = i + 1
+				End
+			
+			EndIf
 		EndSr
 
 		// ///////////////////////////////////////////////////////////////////////////////////////////////
 		BegSr maintAddSoda Access(*public)
-			DclFld col Type (List(Of String))
-			DclFld strin Type (List(Of String))
-			DclFld sodlist Type (List(*Of String))
-			DclFld raw Type (String)
-			DclFld tmp Type (String)
+			DclFld col Type (List(*Of *String))
+			DclFld strin Type (List(*Of *String))
+			DclFld sodlist Type (List(*Of *String))
+			DclFld raw Type (*String)
+			DclFld tmp Type (*String)
 			DclFld isCounted Type (Boolean) inz (*false)
 			DclFld ans Type (String)
+			DclFld i Type(*packed) Len(7,0) inz(0)
+			DclFld u Type(*packed) Len(7,0) inz(0)
+			
 
-			col *Eq *new List(*Of String)()
-			strin *Eq *new List(*Of String)()
+			col = *new List(*Of String)()
+			strin = *new List(*Of String)()
 			sodlist = db.showAsList("SELECT LOWER(SodaName) FROM Sodas;")
 
 			col.Add("SodaName")
@@ -790,30 +802,31 @@ BegClass Menus Access(*Public)
 
 			DoWhile i < col.Count - 1
 				Console.Write(col(i) & ": ")
-				raw = Console.ReadLine
+				raw = Console.ReadLine()
 
 				If col(i) = "SpdaName"
 					DoWhile u < sodList.count
 						If sodlist(i) = raw.ToLower()
-							isCounted = True
-							Exit For
-						End If
+							isCounted = *True
+							leave
+						EndIf
 					EndDo
-					If isCounted = **rue 
+					u=0
+					If isCounted = *True 
 						Console.WriteLine("Soda already in list, do you want to ignore? (y/n)")
-						ans = Console.ReadLine
+						ans = Console.ReadLine()
 						ans = ans.toLower()
 						If ans = "y" Or ans = "yes" 
 							leaveSr
 						Else
-							i *Eq i - 1
+							i = i - 1
 						EndIf
 					EndIf
 				EndIf
 
 				If i >= 0
 					strin.Add(raw)
-				End If
+				EndIf
 			EndDo
 
 			db.Insert("Sodas", col, strin, *nothing, *nothing, *nothing, *nothing)
@@ -835,9 +848,9 @@ BegClass Menus Access(*Public)
 				LeaveSr
 			EndIF
 
-			col *Eq *New Type(List(*Of String))
-			douin *Eq *New Type(List(*Of Double))
-			datin *Eq *New Type(List(*Of DateTime))
+			col = *New List(*Of String)()
+			douin = *New List(*Of Double)()
+			datin = *New List(*Of DateTime)()
 
 			col.Add("ernings")
         	col.Add("date")
@@ -850,7 +863,7 @@ BegClass Menus Access(*Public)
 			recid = getRecID(recLl, recUl)
 			Console.WriteLine("Enter New Values, use * to keep current values")
 
-			DoWhile
+			Do
 				Console.Write("Earnings: ")
 				raw = Console.ReadLine()
 				If raw <> "*" 
@@ -888,24 +901,28 @@ BegClass Menus Access(*Public)
 			EndDo
 
 			If col.Count > 0
-				db.update("CashOut", col, *Nothing, douin, *Nothing, *Nothing, datin, "id=" & recid)
+				db.update("CashOut", col, *Nothing, douin, *Nothing, *Nothing, datin, "id=" + recid)
 			EndIf
 		EndSr
 		
 		// ///////////////////////////////////////////////////////////////////////////////////////////////
 		BegSr udatSpnd Access(*public)
-			DclFld col Type(*of String)
-			DclFld douin Type(*of Double)
-			DclFld Datin Type(*of DateTime)
+			DclFld col Type(List(*Of *String))
+			DclFld douin Type(List(*of Double))
+			DclFld Datin Type(List(*of DateTime))
+			DclFld raw Type(*string)
+			DclFld rowidLl type(Int32)
+			DclFld rowidUl type(Int32)
+			DclFld rowID Type(Int32)
 
 			Console.Clear()
 			If showTop20Spending() = *false 
 				LeaveSr
 			EndIF
 
-			col *Eq *New Type(List(*Of String))
-			douin *Eq *New Type(List(*Of Double))
-			datin *Eq *New Type(List(*Of DateTime))
+			col = *New List(*Of String)()
+			douin = *New List(*Of Double)()
+			datin = *New List(*Of DateTime)()
 
 			raw = db.getEl("Spendings", "MIN(id)", "YEAR(date) = YEAR(NOW()) ORDER BY date DESC LIMIT 20;")
 			rowidLl = Convert.ToInt32(raw)
@@ -923,7 +940,7 @@ BegClass Menus Access(*Public)
 				If raw <> "*"
 					If isNumeric(raw) = *true
 						douin.Add(Convert.ToDouble(raw))
-						Exit While
+						leave
 					Else
 						Console.WriteLine("<<Error: numeric value is invalid>>")
 					EndIf
@@ -954,8 +971,8 @@ BegClass Menus Access(*Public)
 			EndDo
 
 			If col.Count > 0
-				db.update("Spendings", col, *Nothing, douin, *Nothing, *Nothing, datin, "id =" & rowID)
-			End If
+				db.update("Spendings", col, *Nothing, douin, *Nothing, *Nothing, datin, "id =" + rowID)
+			EndIf
 		EndSr
 
 		// ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -964,11 +981,12 @@ BegClass Menus Access(*Public)
 			DclFld recLl Type(Int32)
 			DclFld recid type(Int32)
 			DclFld raw Type(String)
+			DclFld rowID Type(Int32)
 
 			Console.Clear()
-			If showTop20Inventory() = False Then
+			If showTop20Inventory() = *False
 				LeaveSr
-			End If
+			EndIf
 
 			raw = db.getEl("Inventory", "MIN(id)", "YEAR(date) = YEAR(NOW()) ORDER BY date DESC LIMIT 20;")
 			recLl = Convert.ToInt32(raw)
@@ -982,7 +1000,7 @@ BegClass Menus Access(*Public)
 			raw = raw.ToLower()
 
 			If raw = "y" Or raw = "yes"
-				db.runQuery(String.Format("DELETE FROM Inventory WHERE id={0};", rowID)
+				db.runQuery(String.Format("DELETE FROM Inventory WHERE id={0};", rowID))
 			EndIf
 		EndSr
 
@@ -992,11 +1010,12 @@ BegClass Menus Access(*Public)
 			DclFld recLl Type(Int32)
 			DclFld recid type(Int32)
 			DclFld raw Type(String)
+			DclFld rowID Type(Int32)
 
 			Console.Clear()
-			If showTop20CashOut() = False Then
+			If showTop20CashOut() = *False
 				LeaveSr
-			End If
+			EndIf
 
 			raw = db.getEl("Inventory", "MIN(id)", "YEAR(date) = YEAR(NOW()) ORDER BY date DESC LIMIT 20;")
 			recLl = Convert.ToInt32(raw)
@@ -1010,7 +1029,7 @@ BegClass Menus Access(*Public)
 			raw = raw.ToLower()
 
 			If raw = "y" Or raw = "yes"
-				db.runQuery(String.Format("DELETE FROM CashOut WHERE id={0};", rowID)
+				db.runQuery(String.Format("DELETE FROM CashOut WHERE id={0};", rowID))
 			EndIf
 		EndSr
 
@@ -1020,11 +1039,12 @@ BegClass Menus Access(*Public)
 			DclFld recLl Type(Int32)
 			DclFld recid type(Int32)
 			DclFld raw Type(String)
+			DclFld rowID Type(Int32)
 
 			Console.Clear()
-			If showTop20CashOut() = False Then
+			If showTop20CashOut() = *False
 				LeaveSR
-			End If
+			EndIf
 
 			raw = db.getEl("Inventory", "MIN(id)", "YEAR(date) = YEAR(NOW()) ORDER BY date DESC LIMIT 20;")
 			recLl = Convert.ToInt32(raw)
@@ -1033,18 +1053,18 @@ BegClass Menus Access(*Public)
 
 			rowID = getRecID(recLl, recUl)
 
-			Console.Write("Are you sure you want to delete record: " & rowID & " (y/n): ")
+			Console.Write("Are you sure you want to delete record: " + rowID + " (y/n): ")
 			raw = Console.ReadLine()
 			raw = raw.ToLower()
 
 			If raw = "y" Or raw = "yes"
-				db.runQuery("DELETE FROM Spendings WHERE id={0};", rowID)
+				db.runQuery("DELETE FROM Spendings WHERE id=" + rowID + ";")
 			EndIf
 		EndSr
 
 		// ///////////////////////////////////////////////////////////////////////////////////////////////
 		BegFunc showTop20CashOut Access(*public) Type(Boolean)
-			DclFld dt Type(DateTime)
+			DclFld dt Type(DataTable)
 			DclFld tmp Type(String) inz("")
 			DclFld tblStr Type(String) inz("")
 			DclFld r Type(Int32) Inz(0)
@@ -1057,16 +1077,16 @@ BegClass Menus Access(*Public)
                 Console.WriteLine("|-----------------------------------------|")
 			
 				DoWhile r < dt.Rows.Count
-					tmp *Eq "|"
+					tmp = "|"
 
-					tblStr *Eq String.Format("{0,13}",dt.Rows(r)(0).ToString())
-					tmp *Eq String.Format("{0}{1}",tmp, tblStr)
-					tblStr *Eq tring.Format("{0,14}",Convert.ToDouble(dt.Rows(r)(1).ToString()).ToString("C"))
-					tmp *Eq String.Format("{0}{1}",tmp, tblStr)
-					tblStr *Eq String.Format("{0,14}",Convert.ToDateTime(dt.Rows(r)(2).ToString()).ToString("M/d/yyyy"))
-					tmp *Eq String.Format("{0}{1}",tmp, tblStr)
+					tblStr = String.Format("{0,13}",dt.Rows(r)(0).ToString())
+					tmp = String.Format("{0}{1}",tmp, tblStr)
+					tblStr = String.Format("{0,14}",Convert.ToDouble(dt.Rows(r)(1).ToString()).ToString("C"))
+					tmp = String.Format("{0}{1}",tmp, tblStr)
+					tblStr = String.Format("{0,14}",Convert.ToDateTime(dt.Rows(r)(2).ToString()).ToString("M/d/yyyy"))
+					tmp = String.Format("{0}{1}",tmp, tblStr)
 
-					r *Eq r + 1
+					r = r + 1
 					Console.WriteLine(tmp)
 				EndDO
 			Else
@@ -1078,9 +1098,10 @@ BegClass Menus Access(*Public)
 
 		// ///////////////////////////////////////////////////////////////////////////////////////////////
 		BegFunc showTop20Inventory Access(*public) Type(Boolean)
-			DclFld dt Type(DateTime)
+			DclFld dt Type(DataTable)
 			DclFld tmp Type(String) inz("")
 			DclFld tblRow Type(String) inz("")
+			DclFld rowlim Type(Int32) Inz(0)
 			DclFld r Type(Int32) Inz(0)
 			DclFld c Type(Int32) Inz(0)
 
@@ -1092,26 +1113,26 @@ BegClass Menus Access(*Public)
                 Console.WriteLine("------------------------------------------------------------------------------------------------------------------_------")
 			
 				If dt.Rows.Count() < 20 
-					rowlim *Eq dt.Rows.Count() - 1
+					rowlim = dt.Rows.Count() - 1
 				Else
-					rowlim *Eq 19
+					rowlim = 19
 				EndIf
 
 				DoWhile r < dt.Rows.Count
 					DoWhile c < 7
 						Try
 							If isNumeric(dt.Rows(r)(c).ToString()) = *false And c <> 1 
-								tblRow *Eq String.Format("{0}{1,16} ", tblRow, Convert.ToDateTime(dt.Rows(r)(c).ToString()).ToString("M/d/yyyy"))
+								tblRow = String.Format("{0}{1,16} ", tblRow, Convert.ToDateTime(dt.Rows(r)(c).ToString()).ToString("M/d/yyyy"))
 							Else
-								tblRow *Eq String.Format("{0}{1,15} ", tblRow, dt.Rows(r)(c).ToString())
+								tblRow = String.Format("{0}{1,15} ", tblRow, dt.Rows(r)(c).ToString())
 							EndIf
-						Catch xt As Exception
-							tblRow *Eq String.Format("{0}{1,15} ", tblRow, dt.Rows(r)(c).ToString())
-						End Try
+						Catch 
+							tblRow = String.Format("{0}{1,15} ", tblRow, dt.Rows(r)(c).ToString())
+						EndTry
 					EndDo
 					Console.WriteLine(tblRow)
-                	tblRow *Eq ""
-					c *Eq 0
+                	tblRow = ""
+					c = 0
 				EndDO
 			Else
 				Console.WriteLine("<<Error: No records to display>>")
@@ -1122,7 +1143,7 @@ BegClass Menus Access(*Public)
 
 		// ///////////////////////////////////////////////////////////////////////////////////////////////
 		BegFunc showTop20Spending Access(*public) Type(Boolean)
-			DclFld dt Type(DateTime)
+			DclFld dt Type(DataTable)
 			DclFld tmp Type(String) inz("")
 			DclFld tblRow Type(String) inz("")
 			DclFld r Type(Int32) Inz(0)
@@ -1130,23 +1151,24 @@ BegClass Menus Access(*Public)
 
 			dt = db.showAsTable("SELECT * FROM Spendings ORDER BY id DESC LIMIT 20;")
 
-			If dt.Rows.Count > 0 Then
-				Console.WriteLine(" __________________________________________________" & vbNewLine & _
-						"|       ID       |      PRICE     |      DATE      |" & vbNewLine & _
-						"|--------------------------------------------------|")
+			If dt.Rows.Count > 0
+				Console.WriteLine(" __________________________________________________")
+				Console.WriteLine("|       ID       |      PRICE     |      DATE      |")
+				Console.WriteLine("|--------------------------------------------------|")
+				tmp = ""
 			
 				DoWhile r < dt.Rows.Count
-					tblRow *Eq "|"
+					tblRow = "|"
 					doWhile c < 3
 						If isNumeric(dt.Rows(r)(c).ToString()) = *false
-							tblRow *Eq String.Format("{0}{1,17} ", tblRow, Convert.ToDateTime(dt.Rows(r)(c).ToString()).ToString("M/d/yyyy H:mm"))
+							tblRow = String.Format("{0}{1,17} ", tblRow, Convert.ToDateTime(dt.Rows(r)(c).ToString()).ToString("M/d/yyyy H:mm"))
 						Else
-							tblRow *Eq String.Format("{0}{1,15} |", dt.Rows(r)(c).ToString())
+							tblRow = String.Format("{0}{1,15} |", dt.Rows(r)(c).ToString())
 						EndIf
-						c *Eq c + 1
+						c = c + 1
 					EndDo
 					Console.WriteLine(tblRow)
-					r *Eq r + 1
+					r = r + 1
 				EndDo
 			Else	
 				Console.WriteLine("<<Error: No records to display>>")
@@ -1167,7 +1189,7 @@ BegClass Menus Access(*Public)
 				Console.WriteLine("Enter the record id: ")
 				raw = Console.ReadLine()
 				If IsNumeric(raw) = *true
-					RowId *Eq Convert.ToInt32(raw)
+					RowId = Convert.ToInt32(raw)
 					If RowId >= lowrLim And RowId <= uperLim
 						LeaveSr RowId
 					Else
@@ -1177,6 +1199,8 @@ BegClass Menus Access(*Public)
 					Console.WriteLine("<<Error: not a valid input>>")
 				EndIF
 			EndDo
+			
+			leaveSr -1
 		EndFunc
 		// ///////////////////////////////////////////////////////////////////////////////////////////////
 		BegFunc getSum Access(*public) type(Double)
@@ -1187,12 +1211,12 @@ BegClass Menus Access(*Public)
 
 			DoWhile i < list.Count
 				Try
-					tmp *Eq tmp + System.Convert.ToDouble(list[i])
+					tmp = tmp + System.Convert.ToDouble(list[i])
 				Catch Error System.Exception
-					tmp *Eq tmp + 0
+					tmp = tmp + 0
 				EndTry
 
-				i *eq i+1
+				i = i+1
 			EndDo
 
 			leavesr tmp
@@ -1200,7 +1224,10 @@ BegClass Menus Access(*Public)
 		// ///////////////////////////////////////////////////////////////////////////////////////////////
 		BegFunc getAvrage Access(*public) type(Double)
 			DclSrParm list Type(List(*Of String))
-
-			leaveSr getSum(list) / list.Count
+			if list.Count <> 0
+				leaveSr getSum(list) / list.Count
+			else
+				leavesr 0
+			endif
 		EndFunc
 EndClass
