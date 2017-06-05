@@ -3,7 +3,7 @@ Using System.Text
 Using System.Collections.Generic
 Using System.Data
 
-DclNamespace Soda
+DclNamespace SodaAVR
 
 BegClass Menus Access(*Public)
 		DclFld db type(ConnectToServer)
