@@ -1,9 +1,8 @@
-﻿Using System
+Using System
 Using System.Text
 Using System.Data
 Using System.Collections.Generic
 Using MySql.Data.MySqlClient
-
 
 DclNamespace SodaAVR
 
@@ -12,7 +11,7 @@ BegClass ConnectToServer Access(*Public)
 	DclFld       con         Type(MySqlConnection)
 
 	BegConstructor Access(*Public)
-		cnet = "Server=localhost; Database=soda; Uid=root; PASSWORD=vig/&*649/TD10036em1271;"
+		cnet = "Server=localhost; Database=soda; Uid=root; PASSWORD=TD10036em1271VIG/&*649/;"
 		con = *new MysqlConnection()
 
 		con.ConnectionString = cnet
@@ -102,7 +101,7 @@ BegClass ConnectToServer Access(*Public)
 		if open() = *true
 			Try
 				cmd = *new MySqlDataAdapter(query, con)
-				ret *Eq *new DataTable()
+				ret = *new DataTable()
 				cmd.Fill(ret)
 
 				*this.close()
@@ -168,7 +167,7 @@ BegClass ConnectToServer Access(*Public)
 
 		// setup string values
 		If strin <> *nothing
-			i *Eq 0
+			i = 0
 			DoWhile (i < strin.Count)
 				vallst = vallst + "?s_"+i
 
@@ -181,7 +180,7 @@ BegClass ConnectToServer Access(*Public)
 
 		// setup double values
 		If douin <> *nothing
-			i *Eq 0
+			i = 0
 			If vallst.Length > 1
 				vallst = vallst + "," 
 			EndIf
@@ -198,52 +197,52 @@ BegClass ConnectToServer Access(*Public)
 
 		// setup integer values
 		If intin <> *nothing
-			i *Eq 0
+			i = 0
 			If vallst.Length > 1
-				vallst *Eq vallst + "," 
+				vallst = vallst + "," 
 			EndIf
 
 			DoWhile (i < intin.Count())
-				vallst *Eq vallst + "?i_"+i
+				vallst = vallst + "?i_"+i
 
 				If i < (intin.Count()-1)
-					vallst *Eq vallst + ","
+					vallst = vallst + ","
 				EndIF
-				i *Eq i + 1
+				i = i + 1
 			EndDo
 		EndIf
 
 		// setup boolean values
 		If bolin <> *nothing
-			i *Eq 0
+			i = 0
 			If vallst.Length > 1
-				vallst *Eq vallst + "," 
+				vallst = vallst + "," 
 			EndIf
 
 			DoWhile (i < bolin.Count())
-				vallst *Eq vallst + "?b_"+i
+				vallst = vallst + "?b_"+i
 
 				If i < (bolin.Count()-1)
-					vallst *Eq vallst + ","
+					vallst = vallst + ","
 				EndIF
-				i *Eq i + 1
+				i = i + 1
 			EndDo
 		EndIf
 
 		// setup Date Time values
 		If datin <> *nothing
-			i *Eq 0
+			i = 0
 			If vallst.Length > 1
-				vallst *Eq vallst + "," 
+				vallst = vallst + "," 
 			EndIf
 
 			DoWhile (i < datin.Count())
-				vallst *Eq vallst + "?dt_"+i
+				vallst = vallst + "?dt_"+i
 
 				If i < (datin.Count()-1)
-					vallst *Eq vallst + ","
+					vallst = vallst + ","
 				EndIF
-				i *Eq i + 1
+				i = i + 1
 			EndDo
 		EndIf
 
@@ -251,51 +250,51 @@ BegClass ConnectToServer Access(*Public)
 		query = "INSERT INTO " + Table + " (" + Colns + ") VALUES (" + vallst + ")"
 		Try
 			If *this.open() = *true
-				cmd *Eq *new MySqlCommand(query,con)
+				cmd = *new MySqlCommand(query,con)
 				cmd.Prepare()
 
 				// setup String paramiters
 				if strin <> *nothing
-					i *Eq 0
+					i = 0
 					DoWhile (i < strin.Count)
 						cmd.Parameters.AddWithValue("?s_"+i, strin(i))
-						i *Eq i+1
+						i = i+1
 					EndDO
 				EndIf
 
 				// setup double paramiters
 				if douin <> *nothing
-					i *Eq 0
+					i = 0
 					DoWhile (i < douin.Count)
 						cmd.Parameters.AddWithValue("?d_"+i, douin(i))
-						i *Eq i+1
+						i = i+1
 					EndDO
 				EndIf
 
 				// setup String paramiters
 				if intin <> *nothing
-					i *Eq 0
+					i = 0
 					DoWhile (i < intin.Count)
 						cmd.Parameters.AddWithValue("?i_"+i, intin(i))
-						i *Eq i+1
+						i = i+1
 					EndDO
 				EndIf
 
 				// setup double paramiters
 				if bolin <> *nothing
-					i *Eq 0
+					i = 0
 					DoWhile (i < bolin.Count)
 						cmd.Parameters.AddWithValue("?b_"+i, bolin(i))
-						i *Eq i+1
+						i = i+1
 					EndDO
 				EndIf
 
 				// setup date Time paramiters
 				if datin <> *nothing
-					i *Eq 0
+					i = 0
 					DoWhile (i < datin.Count)
 						cmd.Parameters.AddWithValue("?dt_"+i, datin(i))
-						i *Eq i+1
+						i = i+1
 					EndDO
 				EndIf
 
@@ -331,7 +330,7 @@ BegClass ConnectToServer Access(*Public)
 
 		// setup string values
 		If strin <> *nothing
-			i *Eq 0
+			i = 0
 			DoWhile (i < strin.Count)
 				vallst = vallst + col(indCnt) + "=?s_"+i
 
@@ -345,7 +344,7 @@ BegClass ConnectToServer Access(*Public)
 
 		// setup double values
 		If douin <> *nothing
-			i *Eq 0
+			i = 0
 			If vallst.Length > 1
 				vallst = vallst + "," 
 			EndIf
@@ -363,55 +362,55 @@ BegClass ConnectToServer Access(*Public)
 
 		// setup integer values
 		If intin <> *nothing
-			i *Eq 0
+			i = 0
 			If vallst.Length > 1
-				vallst *Eq vallst + "," 
+				vallst = vallst + "," 
 			EndIf
 
 			DoWhile (i < intin.Count())
-				vallst *Eq vallst +col(indCnt)+ "=?i_"+i
+				vallst = vallst +col(indCnt)+ "=?i_"+i
 
 				If i < (intin.Count()-1)
-					vallst *Eq vallst + ","
+					vallst = vallst + ","
 				EndIF
-				i *Eq i + 1
-				indCnt *Eq indCnt + 1
+				i = i + 1
+				indCnt = indCnt + 1
 			EndDo
 		EndIf
 
 		// setup boolean values
 		If bolin <> *nothing
-			i *Eq 0
+			i = 0
 			If vallst.Length > 1
-				vallst *Eq vallst + "," 
+				vallst = vallst + "," 
 			EndIf
 
 			DoWhile (i < bolin.Count())
-				vallst *Eq vallst + col(indCnt) + "=?b_"+i
+				vallst = vallst + col(indCnt) + "=?b_"+i
 
 				If i < (bolin.Count()-1)
-					vallst *Eq vallst + ","
+					vallst = vallst + ","
 				EndIF
-				i *Eq i + 1
-				indCnt *Eq indCnt + 1
+				i = i + 1
+				indCnt = indCnt + 1
 			EndDo
 		EndIf
 
 		// setup Date Time values
 		If datin <> *nothing
-			i *Eq 0
+			i = 0
 			If vallst.Length > 1
-				vallst *Eq vallst + "," 
+				vallst = vallst + "," 
 			EndIf
 
 			DoWhile (i < datin.Count())
-				vallst *Eq vallst + col(indCnt) + "=?dt_"+i
+				vallst = vallst + col(indCnt) + "=?dt_"+i
 
 				If i < (datin.Count()-1)
-					vallst *Eq vallst + ","
+					vallst = vallst + ","
 				EndIF
-				i *Eq i + 1
-				indCnt *Eq indCnt + 1
+				i = i + 1
+				indCnt = indCnt + 1
 			EndDo
 		EndIf
 
@@ -420,51 +419,51 @@ BegClass ConnectToServer Access(*Public)
 
 		Try
 			If *this.open() = *true
-				cmd *Eq *new MySqlCommand(query,con)
+				cmd = *new MySqlCommand(query,con)
 				cmd.Prepare()
 
 				// setup String paramiters
 				if strin <> *nothing
-					i *Eq 0
+					i = 0
 					DoWhile (i < strin.Count)
 						cmd.Parameters.AddWithValue("?s_"+i, strin(i))
-						i *Eq i+1
+						i = i+1
 					EndDO
 				EndIf
 
 				// setup double paramiters
 				if douin <> *nothing
-					i *Eq 0
+					i = 0
 					DoWhile (i < strin.Count)
 						cmd.Parameters.AddWithValue("?d_"+i, strin(i))
-						i *Eq i+1
+						i = i+1
 					EndDO
 				EndIf
 
 				// setup String paramiters
 				if intin <> *nothing
-					i *Eq 0
+					i = 0
 					DoWhile (i < intin.Count)
 						cmd.Parameters.AddWithValue("?i_"+i, intin(i))
-						i *Eq i+1
+						i = i+1
 					EndDO
 				EndIf
 
 				// setup double paramiters
 				if bolin <> *nothing
-					i *Eq 0
+					i = 0
 					DoWhile (i < strin.Count)
 						cmd.Parameters.AddWithValue("?b_"+i, strin(i))
-						i *Eq i+1
+						i = i+1
 					EndDO
 				EndIf
 
 				// setup date Time paramiters
 				if datin <> *nothing
-					i *Eq 0
+					i = 0
 					DoWhile (i < datin.Count)
 						cmd.Parameters.AddWithValue("?dt_"+i, datin(i))
-						i *Eq i+1
+						i = i+1
 					EndDO
 				EndIf
 
@@ -510,5 +509,35 @@ BegClass ConnectToServer Access(*Public)
 			EndTry
 		EndIf
 		LeaveSr 0
+	EndFunc
+
+	// ///////////////////////////////////////////////////////////////////////////////////////////////////////
+	BegFunc showRowAsList Access(*Public) Type(List(*Of String))
+		DclSrParm query Type(String)
+
+		DclFld tmp Type(DataTable)
+		DclFld cmd Type(MySqlDataAdapter)
+		DclFld ret Type(List(*Of String)) inz(*new List(*Of String)())
+		DclFld i Type(*packed) len(8,0) inz(0)
+		DclFld lim Type(Int32)
+
+		if open() = *true
+			Try
+				cmd = *new MySqlDataAdapter(query, con)
+				tmp = *new DataTable()
+				cmd.Fill(tmp)
+
+				lim = tmp.Columns.Count
+				doWhile (i < lim)
+					ret.Add(tmp.Rows(0)(i).ToString())
+					i = i + 1
+				enddo
+
+				*this.close()
+				LeaveSr ret
+			Catch
+			EndTry
+		endif
+		LeaveSr *nothing
 	EndFunc
 EndClass
